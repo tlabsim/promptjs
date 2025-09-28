@@ -1,0 +1,46 @@
+{
+  "name": "@tlabsinc/promptjs-react",
+  "version": "0.0.1",
+  "description": "React bindings for PromptJS.",
+  "type": "module",
+  "sideEffects": false,
+  "private": false,
+  "publishConfig": { "access": "public" },
+
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+
+  "files": ["dist"],
+
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+
+  "dependencies": {
+    "@tlabsinc/promptjs-core": "file:../core"
+  },
+
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "pnpm run check && pnpm run build"
+  },
+
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  }
+}

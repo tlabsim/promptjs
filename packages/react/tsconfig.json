@@ -1,0 +1,33 @@
+// {
+//   "compilerOptions": {
+//     "target": "ES2019",
+//     "module": "ES2015",
+//     "moduleResolution": "Bundler",
+//     "lib": ["ES2019", "DOM"],
+//     "jsx": "react-jsx",
+//     "declaration": true,
+//     "strict": true,
+//     "skipLibCheck": true,
+//     "outDir": "dist"
+//   },
+//   "include": ["src/**/*"]
+// }
+
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["react"]
+  },
+  "include": ["src"]
+}
+

@@ -1,0 +1,693 @@
+/* PromptJS Help Doc – Updated Styles
+   - Two-column layout with sticky sidebar (bookmarks)
+   - Clean, natural typography
+   - Plays nicely with PromptJS CSS (scoped names, no resets)
+*/
+
+/* ---------- CSS Variables ---------- */
+:root {
+  --bg: #0b0c10;
+  --panel: #13141a;
+  --panel-2: #1b1e27;
+  --text: #e8ebf0;
+  --muted: #a7b0c0;
+  --brand: #5aa9e6;
+  --brand-2: #6ae3ff;
+  --ok: #2ecc71;
+  --warn: #ffb020;
+  --danger: #ff5d5d;
+  --link: #8ac8ff;
+  --code-bg: #0f1117;
+  --code-border: #2a2f3a;
+  --border: #283040;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+  --pad: 18px;
+  --pad-sm: 12px;
+  --pad-xs: 8px;
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", "Segoe UI Emoji",
+    "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* layout */
+  --sidebar-w: 260px;
+  --header-h: 64px;
+
+  --toc-anim-ms: 180ms;
+  --toc-anim-ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+/* ---------- Base ---------- */
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.55;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  height: var(--header-h);
+  backdrop-filter: saturate(140%) blur(8px);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 14, 0.85),
+    rgba(8, 10, 14, 0.65)
+  );
+  border-bottom: 1px solid var(--border);
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.version-badge {
+  font-family: var(--mono);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.theme-toggle button {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease;
+}
+.theme-toggle button:hover {
+  transform: translateY(-1px);
+  color: var(--text);
+}
+.theme-toggle button.active {
+  background: var(--brand);
+  color: #05131a;
+  border-color: transparent;
+}
+
+/* ---------- Layout (Two Columns) ---------- */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: 24px;
+  max-width: 1180px;
+  margin: 24px auto 80px;
+  padding: 0 16px;
+}
+
+/* Sidebar (TOC) */
+.sidebar {
+  position: relative;
+}
+
+.toc {
+  position: sticky;
+  top: calc(var(--header-h) + 12px);
+  max-height: calc(100vh - var(--header-h) - 24px);
+  overflow: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 14px 12px;
+}
+
+.toc-head {
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 6px 8px 8px;
+}
+
+/* Group wrapper */
+.toc .toc-group {
+  margin: 4px 0 6px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+/* Group header */
+.toc .toc-group-title,
+.toc a.toc-toplevel-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background var(--toc-anim-ms) var(--toc-anim-ease),
+    color var(--toc-anim-ms) var(--toc-anim-ease),
+    border-color var(--toc-anim-ms) var(--toc-anim-ease);
+}
+
+/* Make top-level Recipes link look like a group title */
+.toc a.toc-toplevel-link {
+  border: 1px solid transparent;
+}
+.toc a.toc-toplevel-link:hover {
+  color: var(--text);
+  background: linear-gradient(180deg, #1b2130, #161a22);
+  border-color: var(--border);
+  text-decoration: none;
+}
+
+/* Caret icon for group titles */
+.toc .toc-group-title::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg) translateY(-1px);
+  opacity: 0.85;
+  transition: transform var(--toc-anim-ms) var(--toc-anim-ease),
+    opacity var(--toc-anim-ms) var(--toc-anim-ease);
+}
+
+/* Hover/active feedback */
+.toc .toc-group-title:hover {
+  color: var(--text);
+  background: linear-gradient(180deg, #1b2130, #161a22);
+  border-color: var(--border);
+}
+
+/* Nested list (animated container) */
+.toc .toc-group > ol {
+  list-style: none;
+  margin: 0;
+  margin-left: 24px;
+  padding: 0 0 6px 12px;
+  display: grid;
+  gap: 6px;
+
+  /* Collapsible animation */
+  overflow: hidden;
+  max-height: 700px; /* a safe cap for content */
+  opacity: 1;
+  transform-origin: top;
+  transition: max-height var(--toc-anim-ms) var(--toc-anim-ease),
+    opacity var(--toc-anim-ms) var(--toc-anim-ease),
+    transform var(--toc-anim-ms) var(--toc-anim-ease);
+}
+
+/* Collapsed state driven via [data-open] */
+.toc .toc-group[data-open="false"] > ol {
+  max-height: 0;
+  opacity: 0;
+  transform: scaleY(0.98);
+  padding-left: 12px; /* keep indent consistent during anim */
+}
+
+/* Rotate caret when open */
+.toc .toc-group[data-open="true"] > .toc-group-title::before {
+  transform: rotate(45deg) translateY(-4px);
+  opacity: 1;
+}
+
+/* Compact the outer list spacing a bit */
+.toc > ol {
+  display: grid;
+  gap: 6px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .toc .toc-group > ol {
+    transition: none;
+  }
+  .toc .toc-group-title::before {
+    transition: none;
+  }
+}
+
+/* Remove list numbering everywhere in the TOC (including nested <ol>) */
+.toc ol,
+.toc ol ol,
+.toc ol li {
+  list-style: none;
+  list-style-type: none;
+  counter-reset: none;
+  counter-increment: none;
+  margin: 0;          /* keep your current layout tight */
+  padding: 0;
+}
+
+/* Nuke markers for engines that still render them */
+.toc li::marker {
+  content: '';
+}
+
+/* Keep your own padding/indent from earlier rules */
+.toc > ol { padding: 0 6px 8px; }
+.toc .toc-group > ol { padding: 0 0 6px 12px; }
+
+/* modern scrollbar */
+.toc::-webkit-scrollbar {
+  width: 8px;
+}
+.toc::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+.toc::-webkit-scrollbar-thumb:hover {
+  background: var(--text);
+}
+/* For edge */
+.toc {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Content column */
+.content {
+  min-width: 0;
+}
+
+section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  margin: 12px 0 22px;
+}
+
+main section:first-of-type {
+  margin-top: 0;
+}
+
+section > h2 {
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+section p,
+section li {
+  color: var(--muted);
+}
+
+/* ---------- Key-Value Docs (Definition List) ---------- */
+.kv {
+  margin: 10px 0 0;
+}
+
+.kv dt {
+  margin: 16px 0 6px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: #d6deeb;
+  background: #0d1016;
+  border: 1px solid var(--code-border);
+  border-left: 3px solid rgba(138, 200, 255, 0.6);
+  border-radius: 8px;
+  padding: 8px 10px;
+  width: fit-content;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.kv dd {
+  margin: 0 0 14px 0;
+  padding-left: 12px;
+  border-left: 2px solid rgba(138, 200, 255, 0.25);
+  color: var(--muted);
+}
+
+
+/* ---------- Quick demo (compact dashboard) ---------- */
+
+.qd {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 12px;
+}
+
+.qd-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 2px 8px;
+  line-height: 1.2;
+}
+.qd-head strong {
+  font-size: 13px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.qd-sub {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.qd-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+@media (max-width: 720px) {
+  .qd-row { grid-template-columns: 1fr; }
+}
+
+.qd-group {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  background: linear-gradient(180deg, #1b2130, #161a22);
+}
+
+.qd-title {
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: .02em;
+}
+
+.qd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.qd-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: #0f1420;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.qd-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--text);
+  background: #0b101a;
+}
+.qd-btn:active { transform: translateY(0); }
+
+
+
+
+/* ---------- Grids ---------- */
+.grid-2,
+.grid-3 {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.grid-3 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (max-width: 1140px) {
+  .grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 860px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Demo Cards ---------- */
+.demo-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--pad);
+}
+
+.demo-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+/* ---------- Code ---------- */
+pre,
+code,
+kbd {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  color: #d6deeb;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  overflow: auto;
+  margin: 8px 0 10px;
+}
+
+/* minimal token tinting (non-invasive) */
+code.language-js .kw,
+code.language-ts .kw {
+  color: #c792ea;
+}
+code.language-js .fn,
+code.language-ts .fn {
+  color: #82aaff;
+}
+code.language-html .tag {
+  color: #7fdbca;
+}
+
+/* Code + Run layout */
+.code-and-run {
+  display: block;
+  margin-bottom: 24px;
+}
+.code-and-run pre {
+  margin-bottom: 6px;
+}
+
+.runbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-run,
+.btn-copy {
+  appearance: none;
+  background: linear-gradient(180deg, #1d2430, #171b24);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 0.06s ease, box-shadow 0.2s ease, background 0.2s ease,
+    border-color 0.2s ease;
+}
+.btn-run:hover,
+.btn-copy:hover {
+  transform: translateY(-1px);
+}
+.btn-run:active,
+.btn-copy:active {
+  transform: translateY(0);
+}
+.btn-run {
+  border-color: rgba(90, 169, 230, 0.6);
+}
+.btn-run::before {
+  content: "▶ ";
+  color: var(--brand-2);
+}
+.btn-copy {
+  border-color: rgba(167, 176, 192, 0.35);
+}
+.btn-copy.copied {
+  border-color: var(--ok);
+  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2) inset;
+}
+
+/* ---------- Details ---------- */
+details {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--pad-sm);
+  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 16px;
+}
+details + .grid-2,
+details + .grid-3 {
+  margin-top: 16px;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Callout: Important */
+.important {
+  --imp-accent: #e67e22; /* tweak if your palette differs */
+  --imp-border: var(--imp-accent);
+  --imp-bg: rgba(230, 126, 34, 0.08);
+
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--imp-border);
+  border-radius: 8px;
+  background: var(--imp-bg);
+}
+
+.important > strong {
+  color: var(--imp-accent);
+}
+
+/* Optional: tighten spacing of first paragraph after the bold label */
+.important > strong + * {
+  margin-top: 4px;
+}
+
+/* Dark-mode polish (only if your doc uses prefers-color-scheme) */
+@media (prefers-color-scheme: dark) {
+  .important {
+    --imp-bg: rgba(230, 126, 34, 0.12);
+  }
+}
+
+input {
+  font-family: var(--font);
+  font-size: 13px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+/* ---------- Utilities ---------- */
+ul.mono li,
+.mono {
+  font-family: var(--mono);
+}
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding: 28px 12px 42px;
+}
+
+/* ---------- Responsive: collapse to single column ---------- */
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .toc {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #ffffff;
+    --text: #000000;
+    --muted: #333333;
+    --code-bg: #f6f8fa;
+    --code-border: #e1e4e8;
+    --border: #dddddd;
+    --shadow: none;
+  }
+  .site-header,
+  .theme-toggle,
+  .runbar,
+  .btn-run,
+  .btn-copy {
+    display: none !important;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+    margin: 0 auto;
+  }
+  .toc {
+    display: none;
+  }
+  section {
+    break-inside: avoid;
+    box-shadow: none;
+    border-color: #e5e7eb;
+  }
+  body {
+    background: #ffffff;
+    color: #000;
+  }
+  pre {
+    color: #111;
+  }
+}

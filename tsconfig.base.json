@@ -1,0 +1,14 @@
+// tsconfig.base.json
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ES2015",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2019", "DOM"],
+    "declaration": true,
+    "strict": true,
+    "outDir": "dist",
+    "skipLibCheck": true
+  },
+  "include": ["packages/**/*"]
+}

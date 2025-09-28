@@ -1,0 +1,1 @@
+declare const __PROMPTJS_VERSION__: string;

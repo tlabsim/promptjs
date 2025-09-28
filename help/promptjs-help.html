@@ -1,0 +1,2817 @@
+<!-- PromptJS Help Documentation -->
+<!-- A comprehensive guide to using PromptJS -->
+<!-- Author: Iftekhar Mahmud Towhid -->
+
+<!DOCTYPE html>
+<html lang="en" class="pj-theme-auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="PromptJS: framework-agnostic modals and toasts"
+    />
+    <meta name="author" content="Iftekhar Mahmud Towhid" />
+    <meta
+      name="keywords"
+      content="PromptJS, modals, toasts, notifications, dialogs, javascript, library, framework-agnostic, accessible, a11y"
+    />
+    <link rel="icon" href="favicon.png" />
+    <title>PromptJS — Developer Guide & Demos</title>
+
+    <!-- PromptJS CSS (adjust path as needed) -->
+    <link rel="stylesheet" href="promptjs/promptjs.css" />
+
+    <!-- Help Doc styles -->
+    <link rel="stylesheet" href="help-doc-styles.css" />
+
+    <!-- PromptJS bundle (choose ONE) -->
+    <!-- <script defer src="promptjs/dist/index.global.js"></script> -->
+    <script defer src="promptjs/index.global.js"></script>
+
+    <!-- Help Doc runtime -->
+    <script defer src="help-doc.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>PromptJS</h1>
+      <div class="header-right">
+        <code class="version-badge" id="version">v0.1.0</code>
+        <div class="theme-toggle" role="group" aria-label="Theme">
+          <button data-theme="auto" class="active">Auto</button>
+          <button data-theme="light">Light</button>
+          <button data-theme="dark">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar / Bookmarks -->
+      <aside class="sidebar" aria-label="Contents">
+        <nav class="toc" id="toc">
+          <div class="toc-head">Contents</div>
+          <ol>
+            <!-- Introduction -->
+            <li class="toc-group">
+              <div class="toc-group-title">Introduction</div>
+              <ol>
+                <li><a href="#intro">What is PromptJS?</a></li>
+                <li><a href="#why">Why use it?</a></li>
+                <li><a href="#quick-start">Quick start</a></li>
+                <li><a href="#architecture">How it works?</a></li>
+              </ol>
+            </li>
+
+            <!-- Configuration -->
+            <li class="toc-group">
+              <div class="toc-group-title">Configuration</div>
+              <ol>
+                <li><a href="#config">Global config</a></li>
+              </ol>
+            </li>
+
+            <!-- Modals -->
+            <li class="toc-group">
+              <div class="toc-group-title">Modals</div>
+              <ol>
+                <li><a href="#modals">Modals API</a></li>
+                <li><a href="#dialogs">Dialog helpers</a></li>
+                <li><a href="#modal-bare">Modal.bare()</a></li>
+              </ol>
+            </li>
+
+            <!-- Toasts -->
+            <li class="toc-group">
+              <div class="toc-group-title">Toasts</div>
+              <ol>
+                <li><a href="#toasts">Toasts</a></li>
+              </ol>
+            </li>
+
+            <!-- Theming & i18n -->
+            <li class="toc-group">
+              <div class="toc-group-title">Theming &amp; i18n</div>
+              <ol>
+                <li><a href="#i18n">Internationalization</a></li>
+                <li><a href="#theming">Theming &amp; CSS hooks</a></li>
+              </ol>
+            </li>
+
+            <!-- Quality -->
+            <li class="toc-group">
+              <div class="toc-group-title">Quality</div>
+              <ol>
+                <li><a href="#a11y">Accessibility</a></li>
+                <li><a href="#performance">Performance</a></li>
+              </ol>
+            </li>
+
+            <!-- Recipes (top-level) -->
+            <li><a href="#recipes" class="toc-toplevel-link">Recipes</a></li>
+
+            <!-- Integrations -->
+            <li class="toc-group">
+              <div class="toc-group-title">Integrations</div>
+              <ol>
+                <li><a href="#react">React bindings</a></li>
+              </ol>
+            </li>
+
+            <!-- Reference -->
+            <li class="toc-group">
+              <div class="toc-group-title">Reference</div>
+              <ol>
+                <li><a href="#reference">API reference</a></li>
+                <li><a href="#changelog">Version &amp; build</a></li>
+              </ol>
+            </li>
+          </ol>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <main class="content">
+        <section id="quick-demo">
+          <div class="qd">
+            <div class="qd-head">
+              <strong>Quick demo</strong>
+              <span class="qd-sub"
+                >Try a few common actions that demonstrate PromptJS's
+                capabilities.</span
+              >
+            </div>
+
+            <div class="qd-row">
+              <div class="qd-group">
+                <div class="qd-title">Modals</div>
+                <div class="qd-actions">
+                  <button class="btn-run qd-btn" data-demo="qd-modal-info">
+                    Info modal
+                  </button>
+                  <button class="btn-run qd-btn" data-demo="qd-confirm">
+                    Confirm
+                  </button>
+                  <button class="btn-run qd-btn" data-demo="qd-question">
+                    Question
+                  </button>
+                  <button class="btn-run qd-btn" data-demo="qd-bare-sheet">
+                    Bare (sheet)
+                  </button>
+                </div>
+              </div>
+
+              <div class="qd-group">
+                <div class="qd-title">Toasts</div>
+                <div class="qd-actions">
+                  <button class="btn-run qd-btn" data-demo="qd-toast-success">
+                    Success toast
+                  </button>
+                  <button class="btn-run qd-btn" data-demo="qd-toast-queue">
+                    Queue (top-right)
+                  </button>
+                  <button class="btn-run qd-btn" data-demo="qd-toast-replace">
+                    Status (replace)
+                  </button>
+                  <button class="btn-run qd-btn" data-demo="qd-toast-sticky">
+                    Sticky + actions
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Intro -->
+        <section id="intro">
+          <h2>What is PromptJS?</h2>
+          <p>
+            <strong>PromptJS</strong> is a tiny, framework-agnostic library for
+            two things teams ship in every app: <em>modals</em> and
+            <em>toasts</em>. It focuses on the boring-but-hard parts—focus
+            management, stacking, keyboard behavior, safe HTML, and predictable
+            animation—so you don’t have to rebuild them for each project.
+          </p>
+
+          <h3>Core ideas</h3>
+          <ul>
+            <li>
+              <strong>Small surface area.</strong> A handful of functions:
+              <code>Modal.open</code>, <code>toast</code>, and light helpers
+              (<code>alert</code>, <code>confirm</code>, <code>question</code>).
+            </li>
+            <li>
+              <strong>Accessible by default.</strong> Focus is trapped,
+              background is aria-hidden, ESC/backdrop close are handled
+              sensibly, and toasts use polite live regions.
+            </li>
+            <li>
+              <strong>Safe by default.</strong> String content is sanitized with
+              a conservative allow-list (toggle with
+              <code>unsafeHTML</code> only for trusted markup).
+            </li>
+            <li>
+              <strong>Portable.</strong> Works in vanilla JS and alongside any
+              UI framework. No peer deps.
+            </li>
+            <li>
+              <strong>Configurable, not prescriptive.</strong> Global config for
+              theme, animation, overlay, modal, and toast behavior; local
+              overrides per call.
+            </li>
+          </ul>
+
+          <h3>Non-goals</h3>
+          <ul>
+            <li>
+              Not a component suite. PromptJS provides primitives; you style
+              them with CSS.
+            </li>
+            <li>
+              No template DSL. You pass strings or DOM nodes you already
+              control.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Why -->
+        <section id="why">
+          <h2>Why use it?</h2>
+          <p>
+            Teams typically need consistent dialogs/notifications across
+            multiple apps and technology stacks. PromptJS gives you the same
+            semantics everywhere, with a tiny API and a11y handled for you.
+          </p>
+
+          <h3>What it solves</h3>
+          <ul>
+            <li>
+              <strong>Focus & keyboard correctness.</strong> Trap within the
+              dialog, restore on close, ESC/backdrop behavior, and no accidental
+              tab escapes.
+            </li>
+            <li>
+              <strong>Stacking & scroll lock.</strong> Body scroll is locked
+              without layout shift; portals are isolated and use predictable
+              z-index rules.
+            </li>
+            <li>
+              <strong>Queueing & rate-control.</strong> Modals can enqueue;
+              toasts can stack, queue, or replace with caps per slot.
+            </li>
+            <li>
+              <strong>Safe content.</strong> String HTML is sanitized; links are
+              checked and made safe (<code>rel="noopener noreferrer"</code> when
+              needed).
+            </li>
+            <li>
+              <strong>Reasonable motion.</strong> Slide/fade/scale with global
+              defaults, per-call overrides, and reduced-motion awareness.
+            </li>
+          </ul>
+
+          <h3>When it’s a good fit</h3>
+          <ul>
+            <li>
+              You want reliable primitives that don’t care which framework
+              renders your app.
+            </li>
+            <li>
+              You need consistent behavior/theme across multiple apps or
+              micro-frontends.
+            </li>
+            <li>
+              You want to keep UX logic (a11y, stacking, timing) separate from
+              product code.
+            </li>
+          </ul>
+
+          <h3>When to consider something else</h3>
+          <ul>
+            <li>
+              You need a full design-system with dozens of components out of the
+              box.
+            </li>
+            <li>
+              You want templates/components tightly coupled to a single
+              framework’s renderer.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Quick Start -->
+        <section id="quick-start">
+          <h2>Quick start</h2>
+          <p>
+            Include the CSS + JS and call the APIs. No build step is required.
+          </p>
+
+          <h3>Include assets</h3>
+          <div class="code-and-run">
+            <pre><code class="language-html">&lt;link rel="stylesheet" href="promptjs/promptjs.css"&gt;
+&lt;!-- Use ONE of the following --&gt;
+&lt;script defer src="promptjs/dist/index.global.js"&gt;&lt;/script&gt;  &lt;!-- exposes window.PromptJS --&gt;
+&lt;!-- or --&gt;
+&lt;script defer src="promptjs/index.js"&gt;&lt;/script&gt;</code></pre>
+          </div>
+
+          <h3>First modal</h3>
+          <div class="code-and-run">
+            <pre><code class="language-html">&lt;script&gt;
+  window.addEventListener("DOMContentLoaded", () =&gt; {
+    const { Modal } = window.PromptJS;
+    Modal.open({
+      kind: "info",
+      title: "Welcome",
+      content: "PromptJS is ready."
+    });
+  });
+&lt;/script&gt;</code></pre>
+            <div class="runbar">
+              <button class="btn-run" data-demo="quickstart">Run</button>
+              <button class="btn-copy" data-copy="#quick-start pre code">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <h3>First toast</h3>
+          <div class="code-and-run">
+            <pre><code class="language-js">PromptJS.toast({
+  kind: "success",
+  message: "&lt;b&gt;Saved&lt;/b&gt; successfully.",
+  timeoutMs: 3000
+});</code></pre>
+          </div>
+
+          <h3>Optional: set some sensible defaults</h3>
+          <div class="code-and-run">
+            <pre><code class="language-js">PromptJS.config.update({
+  theme: "auto",
+  animation: { enable: true, durationMs: 180, easing: "ease" },
+  toast: {
+    defaultPosition: "top-center",
+    behavior: "stack",
+    maxVisible: 3
+  }
+});</code></pre>
+          </div>
+
+          <h3>Safety note about HTML</h3>
+          <p>
+            If you pass a <em>string</em> to <code>content</code> (modal) or
+            <code>message</code> (toast), PromptJS sanitizes it. To embed
+            trusted markup you control, either pass a DOM Node or opt-in with
+            <code>unsafeHTML: true</code>.
+          </p>
+        </section>
+
+        <!-- Architecture -->
+        <section id="architecture">
+          <h2>How it works?</h2>
+          <p>
+            PromptJS mounts two lightweight “portals” into your page and
+            orchestrates focus, stacking, and animation around them. Nothing
+            invasive—just enough structure to be reliable.
+          </p>
+
+          <h3>Portals & layering</h3>
+          <ul>
+            <li><code>.pj-portal</code> — the container for modals.</li>
+            <li>
+              <code>.pj-toasts</code> — the container for toast “slots” (six
+              positions).
+            </li>
+            <li>
+              Z-index is based on <code>config.zIndexBase</code> for modals and
+              <code>zIndexBase + toast.zBoost</code> for toasts, so you control
+              who sits on top.
+            </li>
+          </ul>
+
+          <h3>Modal lifecycle</h3>
+          <ol>
+            <li>
+              <strong>Open.</strong> Calling <code>Modal.open()</code> renders
+              an overlay and a dialog surface. Focus is moved inside; background
+              siblings are given <code>aria-hidden</code>.
+            </li>
+            <li>
+              <strong>Interaction.</strong> Buttons can be synchronous or async.
+              While an async handler runs, the clicked button is temporarily
+              disabled to prevent double submits.
+            </li>
+            <li>
+              <strong>Close.</strong> The modal exits (with or without
+              animation), focus is restored to the previously focused element,
+              and any queued modal opens next (if
+              <code>concurrency="queue"</code>).
+            </li>
+          </ol>
+
+          <h3>Toast orchestration</h3>
+          <ul>
+            <li>
+              Toasts are mounted into a position slot (e.g.,
+              <code>top-right</code>).
+            </li>
+            <li>
+              <strong>Behavior</strong> per slot: <em>stack</em> (drop oldest
+              when full), <em>queue</em> (wait your turn), or
+              <em>replace</em> (show only the newest).
+            </li>
+            <li>
+              Each toast has its own enter/exit animation; the wrapper then
+              collapses height/margins so the stack doesn’t jump.
+            </li>
+          </ul>
+
+          <h3>Animations & motion</h3>
+          <ul>
+            <li>
+              Global defaults live in <code>config.animation</code>; components
+              can override per call.
+            </li>
+            <li>
+              Slide/fade/scale are supported; for slide you can let
+              <code>direction: "auto"</code> follow the slot position.
+            </li>
+            <li>
+              System “reduced motion” is respected in places where it improves
+              comfort.
+            </li>
+          </ul>
+
+          <h3>Sanitization & links</h3>
+          <ul>
+            <li>
+              String HTML is cleaned with an allow-list of safe
+              inline/structural tags.
+            </li>
+            <li>
+              Links get protocol checks; <code>target="_blank"</code> links
+              receive <code>rel="noopener noreferrer"</code> automatically.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Config (EXPLAINED) -->
+        <section id="config">
+          <h2>Global config</h2>
+          <p>
+            Update configuration at runtime with
+            <code>PromptJS.config.update(partial)</code>. Updates are
+            <strong>deep-merged</strong>, so you can change a single field
+            without restating the rest of the object. The merge is careful for
+            nested trees like <code>toast.animations</code>—e.g., changing only
+            <code>animations.enter</code> won’t clobber
+            <code>animations.exit</code>.
+          </p>
+
+          <h3>At a glance: full config shape</h3>
+          <p>
+            The snippet below shows the complete structure you can pass to
+            <code>PromptJS.config.update()</code>. You don't need to provide
+            everything—updates are deep-merged, so unspecified fields keep their
+            current values.
+          </p>
+
+          <div class="code-and-run">
+            <pre><code class="language-js">PromptJS.config.update({
+  theme: "auto",                // "auto" | "light" | "dark"
+  container: null,              // HTMLElement or null (defaults to document.body)
+  zIndexBase: 2000,             // Base z-index for modals; toasts add toast.zBoost
+
+  animation: {                  // Global animation policy & defaults
+    enable: true,               // Master switch for PromptJS animations
+    durationMs: 180,            // Baseline duration for enter/exit when not overridden
+    easing: "ease"              // Default CSS timing function (e.g., "ease", "linear", cubic-bezier)
+  },
+
+  i18n: {                       // Active language bundle (used by dialogs & default titles)
+    locale: "en",
+    dir: "auto",                // "ltr" | "rtl" | "auto"
+    ok: "OK",
+    cancel: "Cancel",
+    yes: "Yes",
+    no: "No",
+    close: "Close",
+    dismiss: "Dismiss",
+    titles: {                   // Fallback titles when a modal has a kind but no title
+      info: "Information",
+      success: "Success",
+      warning: "Warning",
+      error: "Error",
+      question: "Question"
+    }
+  },
+
+  a11y: {},                     // Reserved for future global a11y flags
+  breakpoints: { sm: 480, md: 640, lg: 800 },
+  icons: {},                    // Optional hook for theme icon mapping
+
+  overlay: {                    // Backdrop behind modals
+    fade: true,                 // Fade the overlay in/out
+    surfaceAlpha: 0.6,          // Backdrop opacity (0..1)
+    backdropBlurPx: 0           // Optional blur applied to the backdrop
+  },
+
+  modal: {                      // Modal surface behavior & visuals
+    concurrency: "queue",       // "queue" | "reject" when a modal is already open
+    surfaceAlpha: 1,            // Modal card opacity (0..1)
+    dialogBlurPx: 0             // Blur behind a translucent modal surface (not the overlay)
+  },
+
+  toast: {                      // Toast system defaults
+    defaultPosition: "top-center",    // Slot: top/bottom + left/center/right
+    behavior: "stack",                // "stack" | "queue" | "replace"
+    maxVisible: 3,                    // Per-slot visible cap
+    spacingPx: 10,                    // Gap between toasts in a slot
+    margins: { top: 16, bottom: 16, left: 16, right: 16 }, // Viewport margins
+    zBoost: 100,                      // Added to zIndexBase for toasts root
+
+    animations: {
+      enter:      { preset: "slide", direction: "auto" },  // Per-phase animation spec
+      exit:       { preset: "slide", direction: "auto" },
+      timeoutCue: { show: true, position: "bottom", direction: "shrink", thicknessPx: 3 } // Lifetime indicator
+    },
+
+    defaultTimeoutMs: 4000,          // Auto-dismiss time; 0 makes sticky by default
+    defaultDismissible: true         // Show close button by default
+  }
+});</code></pre>
+
+            <div class="runbar">
+              <button class="btn-copy" data-copy="#config pre code">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- TOP-LEVEL -->
+          <details open>
+            <summary><strong>Top-level</strong></summary>
+            <dl class="kv">
+              <dt><code>theme</code> <em>("auto" | "light" | "dark")</em></dt>
+              <dd>
+                Sets the UI theme. The chosen class (<code>pj-theme-*</code>) is
+                applied to <code>&lt;html&gt;</code> and mirrored onto PromptJS
+                portals (<code>.pj-portal</code>, <code>.pj-toasts</code>), so
+                your CSS can style both the page and injected surfaces
+                consistently. Switching the theme takes effect immediately and
+                removes previously set theme classes to avoid conflicts.
+                <br /><strong>Default:</strong> <code>"auto"</code>.
+              </dd>
+
+              <dt><code>container</code> <em>(HTMLElement | null)</em></dt>
+              <dd>
+                Controls where PromptJS portals are mounted. If you provide an
+                element,
+                <code>.pj-portal</code> and <code>.pj-toasts</code> are created
+                inside it; otherwise they are attached to
+                <code>document.body</code>. This is useful when you want
+                PromptJS to live inside a specific subtree or micro-frontend
+                shell. <br /><strong>Default:</strong> <code>null</code> (falls
+                back to <code>document.body</code>).
+              </dd>
+
+              <dt><code>zIndexBase</code> <em>(number)</em></dt>
+              <dd>
+                Establishes the stacking context for modals. Toasts are rendered
+                in a separate root whose z-index is computed as
+                <code>zIndexBase + toast.zBoost</code>, so they can appear above
+                dialogs when desired. Increase this value if your app has other
+                high z-index elements. <br /><strong>Default:</strong>
+                <code>2000</code>.
+              </dd>
+
+              <dt>
+                <code>animation</code> <em>({ enable, durationMs, easing })</em>
+              </dt>
+              <dd>
+                Provides global animation policy and defaults used by both
+                modals and toasts unless a component overrides them.
+                <ul>
+                  <li>
+                    <code>enable</code> <em>(boolean)</em> — Turns PromptJS
+                    animations on or off globally. When set to
+                    <code>false</code>, components render and tear down without
+                    animation (overlay fades, toast enter/exit, and collapse
+                    transitions are skipped). Use this for testing, performance
+                    audits, or environments where motion is undesirable.
+                    <br /><strong>Default:</strong> <code>true</code>.
+                  </li>
+                  <li>
+                    <code>durationMs</code> <em>(number)</em> — The baseline
+                    duration (in milliseconds) applied to PromptJS animations
+                    where a local duration is not specified. Choose a value that
+                    balances clarity and responsiveness; 160–220ms is a common
+                    range for short UI transitions. <br /><strong
+                      >Default:</strong
+                    >
+                    <code>180</code>.
+                  </li>
+                  <li>
+                    <code>easing</code> <em>(string)</em> — The CSS timing
+                    function used as a default easing curve. You can provide
+                    standard keywords (e.g., <code>ease</code>) or a custom
+                    cubic-bezier value. This affects perceived weight and speed;
+                    for example, a softer curve can make panels feel less
+                    abrupt. <br /><strong>Default:</strong> <code>"ease"</code>.
+                  </li>
+                </ul>
+                <em>Note:</em> PromptJS also respects the user’s “reduced
+                motion” preference—when detected, it minimizes motion in places
+                where it improves comfort (e.g., toast stack collapse).
+              </dd>
+
+              <dt><code>i18n</code> <em>(object)</em></dt>
+              <dd>
+                Holds the active language pack used by PromptJS for labels and
+                default titles. You can switch languages at runtime using
+                <code>PromptJS.i18n.set(locale)</code>, or register and switch
+                in one call with <code>i18n.use(locale, bundle?)</code>. For
+                lazy loading, <code>i18n.load(locale, loader)</code>
+                returns a promise and sets the pack when resolved.
+                <br />Fields include <code>locale</code>,
+                <code>dir</code>
+                (<code>"ltr"</code>/<code>"rtl"</code>/<code>"auto"</code>),
+                button labels (<code>ok</code>, <code>cancel</code>,
+                <code>yes</code>, <code>no</code>, <code>close</code>,
+                <code>dismiss</code>), and <code>titles</code> used when a modal
+                has a <code>kind</code> but no explicit <code>title</code>.
+              </dd>
+
+              <dt><code>a11y</code> <em>(object)</em></dt>
+              <dd>
+                Reserved for future global accessibility switches. Core
+                accessibility features (focus trapping,
+                <code>aria-modal</code>, temporary <code>aria-hidden</code> on
+                siblings) are enabled by design and do not require
+                configuration.
+              </dd>
+
+              <dt><code>breakpoints</code> <em>({ sm, md, lg })</em></dt>
+              <dd>
+                Convenience numeric breakpoints you can reference from your own
+                styles. They are not enforced by PromptJS core but can be
+                helpful for theming your modals/toasts responsively.
+                <br /><strong>Default:</strong>
+                <code>{ sm: 480, md: 640, lg: 800 }</code>.
+              </dd>
+
+              <dt><code>icons</code> <em>(object)</em></dt>
+              <dd>
+                Optional hook for supplying or overriding icon assets in themes.
+                The core library does not require or depend on this object; use
+                it if your design system wants to map semantic kinds to custom
+                SVGs.
+              </dd>
+            </dl>
+          </details>
+
+          <!-- OVERLAY -->
+          <details open>
+            <summary><strong>Overlay (modal backdrop)</strong></summary>
+            <dl class="kv">
+              <dt><code>overlay.fade</code> <em>(boolean)</em></dt>
+              <dd>
+                Enables a fade transition for the backdrop in sync with the
+                modal’s own enter/exit. Disabling this makes the overlay appear
+                and disappear instantly, which can be preferable in low-motion
+                contexts.
+                <br /><strong>Default:</strong> <code>true</code>.
+              </dd>
+
+              <dt><code>overlay.surfaceAlpha</code> <em>(number 0..1)</em></dt>
+              <dd>
+                Specifies the background opacity of the overlay (the full-screen
+                backdrop placed behind the modal). Use a value between 0 (fully
+                transparent) and 1 (fully opaque). Higher values dim the page
+                more and draw attention to the dialog; lower values reduce
+                contrast with the background.
+                <br /><strong>Default:</strong> <code>0.6</code>.
+              </dd>
+
+              <dt><code>overlay.backdropBlurPx</code> <em>(number)</em></dt>
+              <dd>
+                Adds a visual blur to the overlay background, measured in
+                pixels. This is applied via a CSS variable and is independent
+                from the modal’s own surface blur. Set a small value (e.g., 4–8)
+                to soften busy backgrounds without overdoing it.
+                <br /><strong>Default:</strong> <code>0</code> (no blur).
+              </dd>
+            </dl>
+            <p class="note">
+              <strong>Tip:</strong> Overlay blur and modal surface translucency
+              are separate controls. Combining both can be visually heavy—prefer
+              subtle values.
+            </p>
+          </details>
+
+          <!-- MODAL -->
+          <details open>
+            <summary><strong>Modal</strong></summary>
+            <dl class="kv">
+              <dt>
+                <code>modal.concurrency</code> <em>("queue" | "reject")</em>
+              </dt>
+              <dd>
+                Controls what happens if code tries to open a modal while one is
+                already open.
+                <code>"queue"</code> enqueues the new open request and displays
+                it after the current modal closes; <code>"reject"</code> throws
+                an error immediately. Use <code>"reject"</code> to catch
+                accidental re-entrancy during development. <br /><strong
+                  >Default:</strong
+                >
+                <code>"queue"</code>.
+              </dd>
+
+              <dt><code>modal.surfaceAlpha</code> <em>(number 0..1)</em></dt>
+              <dd>
+                Sets the opacity of the modal surface itself (the dialog card).
+                Values below 1 mark the surface as translucent, allowing you to
+                pair with a small <code>dialogBlurPx</code> for a subtle frosted
+                look. <br /><strong>Default:</strong> <code>1</code> (opaque).
+              </dd>
+
+              <dt><code>modal.dialogBlurPx</code> <em>(number)</em></dt>
+              <dd>
+                Applies a blur behind the modal surface (distinct from the
+                overlay’s blur). This has an effect only when the surface is
+                translucent (<code>surfaceAlpha &lt; 1</code>). Use sparingly to
+                keep text legible. <br /><strong>Default:</strong>
+                <code>0</code>.
+              </dd>
+            </dl>
+            <p class="note">
+              <strong>Close reasons:</strong> your <code>onClose</code> handler
+              may receive a button <code>id</code>, or one of
+              <code>"close"</code> (X button), <code>"esc"</code>, or
+              <code>"backdrop"</code>.
+            </p>
+          </details>
+
+          <!-- TOAST -->
+          <details open>
+            <summary><strong>Toast</strong></summary>
+            <dl class="kv">
+              <dt>
+                <code>toast.defaultPosition</code>
+                <em
+                  >("top-left" | "top-center" | "top-right" | "bottom-left" |
+                  "bottom-center" | "bottom-right")</em
+                >
+              </dt>
+              <dd>
+                Sets the default position slot for toasts. You can override per
+                toast. Center slots use vertical motion by default; corner slots
+                use horizontal motion when <code>direction: "auto"</code> is in
+                effect. <br /><strong>Default:</strong>
+                <code>"top-center"</code>.
+              </dd>
+
+              <dt>
+                <code>toast.behavior</code>
+                <em>("stack" | "queue" | "replace")</em>
+              </dt>
+              <dd>
+                Defines how new toasts are handled when a position slot is at
+                capacity.
+                <ul>
+                  <li>
+                    <strong>stack</strong> — Append to the stack and drop the
+                    oldest when the cap is exceeded. Keeps the interface
+                    responsive.
+                  </li>
+                  <li>
+                    <strong>queue</strong> — Hold extras in a queue and show
+                    them as space frees up. Preserves strict ordering.
+                  </li>
+                  <li>
+                    <strong>replace</strong> — Clear existing items in the slot
+                    and show only the newest toast. Useful for “latest status
+                    only”.
+                  </li>
+                </ul>
+                <strong>Default:</strong> <code>"stack"</code>.
+              </dd>
+
+              <dt><code>toast.maxVisible</code> <em>(number)</em></dt>
+              <dd>
+                Maximum number of toasts shown at once in a single slot. This
+                limits visual noise and keeps layouts stable.
+                <br /><strong>Default:</strong> <code>3</code>.
+              </dd>
+
+              <dt><code>toast.spacingPx</code> <em>(number)</em></dt>
+              <dd>
+                The gap, in pixels, between toasts inside the same slot.
+                Increase it slightly if toasts contain larger content.
+                <br /><strong>Default:</strong> <code>10</code>.
+              </dd>
+
+              <dt>
+                <code>toast.margins</code>
+                <em>({ top, bottom, left, right })</em>
+              </dt>
+              <dd>
+                Viewport margins applied to toast slots. Adjust these to avoid
+                system UI regions or in-app toolbars, or to better fit safe
+                areas on small screens.
+                <br /><strong>Default:</strong>
+                <code>{ top: 16, bottom: 16, left: 16, right: 16 }</code>.
+              </dd>
+
+              <dt><code>toast.zBoost</code> <em>(number)</em></dt>
+              <dd>
+                Additional z-index added to <code>zIndexBase</code> for the
+                toasts root. This allows toasts to float above modals when
+                appropriate. Lower the value if your design requires toasts to
+                sit under dialogs. <br /><strong>Default:</strong>
+                <code>100</code>.
+              </dd>
+
+              <dt>
+                <code>toast.animations.enter</code> /
+                <code>toast.animations.exit</code>
+              </dt>
+              <dd>
+                Per-phase animation specifications. When omitted, PromptJS uses
+                sensible defaults (slide with derived direction). Each phase
+                accepts:
+                <ul>
+                  <li>
+                    <code>preset</code> <em>("slide" | "fade" | "scale")</em> —
+                    The type of transition. <em>Slide</em> conveys spatial
+                    origin; <em>fade</em> is the most subtle;
+                    <em>scale</em> emphasizes appearance.
+                  </li>
+                  <li>
+                    <code>direction</code>
+                    <em>("left" | "right" | "up" | "down" | "auto")</em> — Only
+                    used for <em>slide</em>. With <code>"auto"</code>, PromptJS
+                    infers a sensible direction from the slot position (e.g.,
+                    <code>top-right</code> slides horizontally from the right).
+                  </li>
+                  <li>
+                    <code>distance</code> <em>("edge" | number | string)</em> —
+                    Enter-phase only. With <code>"edge"</code>, PromptJS uses an
+                    off-screen distance for corners and a subtle distance for
+                    centers. You can provide a pixel number or a CSS length
+                    (e.g., <code>"40vh"</code>) for emphasis.
+                  </li>
+                  <li>
+                    <code>durationMs</code> <em>(number)</em> — Overrides the
+                    global duration for this phase. Use shorter durations for
+                    exit to keep the interface snappy.
+                  </li>
+                  <li>
+                    <code>easing</code> <em>(string)</em> — Overrides the global
+                    easing for this phase. Accepts any CSS timing function.
+                  </li>
+                </ul>
+              </dd>
+
+              <dt><code>toast.animations.timeoutCue</code></dt>
+              <dd>
+                Configures a visual lifetime indicator for auto-dismissing
+                toasts.
+                <ul>
+                  <li>
+                    <code>show</code> <em>(boolean)</em> — Toggles the
+                    indicator. Set to <code>false</code> to disable globally.
+                  </li>
+                  <li>
+                    <code>position</code>
+                    <em>("top" | "bottom" | "left" | "right" | "cover")</em> —
+                    Controls where the cue appears. Bar positions render a thin
+                    progress bar; <code>"cover"</code> overlays an animated veil
+                    over the toast.
+                  </li>
+                  <li>
+                    <code>direction</code>
+                    <em>("grow" | "shrink")</em> — Direction of the cue
+                    animation. <code>"shrink"</code> makes the bar/cover start
+                    full and recede to zero; <code>"grow"</code> expands from
+                    zero to full (the original behavior). <br /><strong
+                      >Default:</strong
+                    >
+                    <code>"shrink"</code>.
+                  </li>
+                  <li>
+                    <code>thicknessPx</code> <em>(number)</em> — Thickness of
+                    the bar when using a bar position. Ignored for
+                    <code>"cover"</code>.
+                  </li>
+                </ul>
+              </dd>
+
+              <dt><code>toast.defaultTimeoutMs</code> <em>(number)</em></dt>
+              <dd>
+                The default auto-dismiss duration for toasts, in milliseconds.
+                Set to <code>0</code> to make toasts sticky by default (they
+                will remain until closed by the user or via code). Individual
+                toasts can still override this. <br /><strong>Default:</strong>
+                <code>4000</code>.
+              </dd>
+
+              <dt><code>toast.defaultDismissible</code> <em>(boolean)</em></dt>
+              <dd>
+                Controls whether to show a close button on toasts by default.
+                For “mini-modal” patterns, you will typically set
+                <code>dismissible: false</code> per toast and
+                <code>timeoutMs: 0</code>. <br /><strong>Default:</strong>
+                <code>true</code>.
+              </dd>
+            </dl>
+
+            <p class="note">
+              <strong>Stack behavior details:</strong> When a toast exits,
+              PromptJS first runs the toast’s own exit animation, then animates
+              the wrapper’s height/margins/padding to zero. This prevents the
+              remaining toasts from “jumping” and keeps motion smooth—especially
+              in queued stacks.
+            </p>
+          </details>
+
+          <!-- MERGE + THEME NOTES -->
+          <details>
+            <summary>
+              <strong>Deep-merge behavior &amp; theme mirroring</strong>
+            </summary>
+            <ul>
+              <li>
+                <strong>Deep merge:</strong> <code>config.update()</code> merges
+                nested objects such as <code>toast.margins</code> and
+                <code>toast.animations</code>. You can update a single nested
+                property without redefining siblings; unspecified fields retain
+                their prior values.
+              </li>
+              <li>
+                <strong>Theme mirroring:</strong> changing
+                <code>theme</code> updates classes on <code>&lt;html&gt;</code>,
+                <code>.pj-portal</code>, and <code>.pj-toasts</code> so
+                component surfaces follow your page theme. The updater also
+                removes conflicting theme classes to avoid style clashes.
+              </li>
+            </ul>
+          </details>
+
+          <!-- TRY IT -->
+          <h3>Try it</h3>
+          <div class="code-and-run">
+            <pre id="config-tryit-code"><code class="language-js">(function () {
+  // Cycle PromptJS theme: auto -> dark -> light -> auto
+  const next = { auto: "dark", dark: "light", light: "auto" };
+  const curTheme = PromptJS.config.get().theme || "auto";
+  PromptJS.config.update({ theme: next[curTheme] });
+
+  // Flip only the timeout cue direction via deep-merge
+  const curDir = PromptJS.config.get().toast.animations.timeoutCue?.direction || "shrink";
+  PromptJS.config.update({
+    toast: { animations: { timeoutCue: { direction: curDir === "shrink" ? "grow" : "shrink" } } }
+  });
+
+  // Show a toast so the change is visible immediately
+  PromptJS.toast({
+    kind: "info",
+    message: "Theme & timeout cue direction toggled.",
+    position: "top-right",
+    timeoutMs: 2500
+  });
+})();</code></pre>
+            <div class="runbar">
+              <button class="btn-copy" data-copy="#config-tryit-code">
+                Copy
+              </button>
+              <button class="btn-run" data-demo="config-tryit">Run</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Modals -->
+        <section id="modals">
+          <h2>Modals API</h2>
+          <p>
+            Open a modal with <code>PromptJS.Modal.open(options)</code>. The
+            call returns a handle
+            <code>{ id, close(result?), update(partial) }</code>. By default, if
+            a modal is already open, new requests are <em>queued</em> and shown
+            one after another (configurable via
+            <code>config.modal.concurrency</code>).
+          </p>
+
+          <h3>Signature</h3>
+          <pre><code class="language-ts">function Modal.open(options: {
+  kind?: "info" | "success" | "warning" | "error" | "question";
+  title?: string;
+  content: string | Node;
+  unsafeHTML?: boolean;
+
+  showClose?: boolean;          // default: true
+  closeOnEsc?: boolean;         // default: true
+  closeOnBackdrop?: boolean;    // default: true
+  trapFocus?: boolean;          // default: true
+
+  surfaceAlpha?: number;        // 0..1  (default from config.modal.surfaceAlpha)
+  dialogBlurPx?: number;        // pixels (default from config.modal.dialogBlurPx)
+  ariaLabel?: string;
+
+  buttons?: Array&lt;{
+    id: string;
+    text: string;
+    variant?: "primary" | "neutral" | "danger" | "ghost";
+    closeOnClick?: boolean;     // default: true
+    onClick?: (inst) =&gt; void | Promise&lt;void&gt;;
+  }&gt;;
+
+  onOpen?: (inst) =&gt; void;
+  onClose?: (reason: string) =&gt; void; // "close" | "esc" | "backdrop" | button id
+  animate?: boolean;             // overrides config.animation.enable
+}) =&gt; { id: string; close: (result?: string) =&gt; void; update: (partial) =&gt; void };</code></pre>
+
+          <h3>Field-by-field</h3>
+          <dl class="kv">
+            <dt><code>kind</code></dt>
+            <dd>
+              Optional semantic hint (<code>info</code>, <code>success</code>,
+              <code>warning</code>, <code>error</code>, <code>question</code>).
+              Adds a CSS class for styling (e.g. status color) and supplies a
+              default title from the active i18n bundle when
+              <code>title</code> is omitted.
+            </dd>
+
+            <dt><code>title</code></dt>
+            <dd>
+              Visible heading text. When you intentionally omit a visible title,
+              provide an <code>ariaLabel</code>
+              so the dialog still has an accessible name.
+            </dd>
+
+            <dt><code>content</code></dt>
+            <dd>
+              The body of the modal. If you pass a <em>string</em>, PromptJS
+              sanitizes it using a conservative allow-list (inline text, lists,
+              headings, links). If you pass a <em>DOM Node</em>, it is attached
+              as-is. For trusted markup in string form, set
+              <code>unsafeHTML: true</code>.
+            </dd>
+
+            <div class="important">
+              <strong>Important:</strong> String content is sanitized
+              <p>
+                If you pass <em>string</em> content to modals or toasts, it’s
+                sanitized with a conservative allow-list (inline text, headings,
+                lists, links). For trusted markup you control, pass
+                <code>unsafeHTML: true</code>. Passing a real DOM node (e.g., a
+                form element) skips sanitization and is the preferred way to
+                render complex content.
+              </p>
+            </div>
+
+            <dt><code>unsafeHTML</code></dt>
+            <dd>
+              Bypasses sanitization for string content you control. Do not use
+              with user-provided input.
+            </dd>
+
+            <dt><code>showClose</code></dt>
+            <dd>
+              Whether to show the top-right close button. Clicking it triggers
+              <code>onClose("close")</code>. Defaults to <code>true</code>.
+            </dd>
+
+            <dt><code>closeOnEsc</code> / <code>closeOnBackdrop</code></dt>
+            <dd>
+              Keyboard and backdrop behavior. If enabled, pressing ESC closes
+              with reason <code>"esc"</code>, and clicking outside closes with
+              <code>"backdrop"</code>. Disable backdrop close for forms to
+              prevent losing work. Both default to <code>true</code>.
+            </dd>
+
+            <dt><code>trapFocus</code></dt>
+            <dd>
+              Keeps tab focus inside the dialog until it closes; restores focus
+              to the previously focused element. Defaults to
+              <code>true</code> for accessibility.
+            </dd>
+
+            <div class="important">
+              <strong>Important:</strong> Focus trapping & restore
+              <p>
+                Modals trap keyboard focus by default (<code
+                  >trapFocus: true</code
+                >) and restore focus to the previously focused element on close.
+                If you disable it, ensure your dialog remains keyboard navigable
+                and that focus has a sensible landing point.
+              </p>
+            </div>
+
+            <dt><code>surfaceAlpha</code> / <code>dialogBlurPx</code></dt>
+            <dd>
+              Visual properties of the modal card.
+              <code>surfaceAlpha</code> sets opacity (0..1). Values &lt; 1 mark
+              the surface as translucent; pairing with a small
+              <code>dialogBlurPx</code> places a subtle blur behind the card.
+              Defaults inherit from <code>config.modal</code>.
+            </dd>
+
+            <dt><code>ariaLabel</code></dt>
+            <dd>
+              Accessible name for screen readers when there is no visible title.
+              Recommended if your header is icon-only.
+            </dd>
+
+            <dt><code>buttons</code></dt>
+            <dd>
+              Footer action row. Each button has an <code>id</code> that is
+              returned to <code>onClose</code> if it closes the modal.
+              <code>onClick</code> may be async; while it runs, the clicked
+              button is temporarily disabled to prevent double submits. If you
+              omit <code>buttons</code>, a single primary button labeled with
+              <code>i18n.ok</code> is rendered.
+            </dd>
+
+            <div class="important">
+              <strong>Important:</strong> Button <code>onClick</code> is
+              protected against double-submit
+              <p>
+                Dialog footer buttons are temporarily disabled while their
+                (possibly async) <code>onClick</code> runs, preventing duplicate
+                submissions. To keep a dialog open after an action (e.g., a
+                wizard), set <code>closeOnClick: false</code> and call
+                <code>inst.update()</code> yourself.
+              </p>
+            </div>
+
+            <dt><code>onOpen</code> / <code>onClose</code></dt>
+            <dd>
+              Lifecycle hooks. <code>onOpen</code> fires post-render with the
+              instance handle. <code>onClose</code> receives a reason: a button
+              <code>id</code>, or one of <code>"close"</code>,
+              <code>"esc"</code>, <code>"backdrop"</code>.
+            </dd>
+
+            <div class="important">
+              <strong>Important:</strong> Modal close reasons
+              <p>
+                <code>onClose</code> receives either a footer button
+                <code>id</code> or one of <code>"close"</code> (header ×),
+                <code>"esc"</code>, or <code>"backdrop"</code>. If you need to
+                distinguish user cancel vs. confirm, use distinct button IDs
+                (e.g., <code>"cancel"</code>, <code>"ok"</code>).
+              </p>
+            </div>
+
+            <dt><code>animate</code></dt>
+            <dd>
+              Per-modal override for <code>config.animation.enable</code>. Set
+              false to open/close instantly (useful for tests).
+            </dd>
+
+            <dt><code>draggable</code></dt>
+            <dd>
+              Makes the modal surface draggable on desktop. Accepts a boolean or
+              an options object.
+              <ul>
+                <li>
+                  <strong>Boolean:</strong> <code>true</code> enables dragging
+                  with sensible defaults; <code>false</code> disables it.
+                </li>
+                <li>
+                  <strong>Object:</strong> fine-grained control:
+                  <ul>
+                    <li>
+                      <code>handle</code>
+                      <em>("header" | string | HTMLElement)</em> — Drag handle.
+                      Defaults to <code>"header"</code> when windowed, or the
+                      whole surface when non-windowed.
+                    </li>
+                    <li>
+                      <code>axis</code> <em>("x" | "y" | "both")</em> —
+                      Constrain dragging to an axis. <strong>Default:</strong>
+                      <code>"both"</code>.
+                    </li>
+                    <li>
+                      <code>withinViewport</code> <em>(boolean)</em> — Keep the
+                      modal within (a generous) viewport bounds.
+                      <strong>Default:</strong> <code>true</code>.
+                    </li>
+                    <li>
+                      <code>disableOnMobile</code> <em>(boolean)</em> — Disable
+                      dragging on coarse pointers/mobile UAs.
+                      <strong>Default:</strong> <code>true</code>.
+                    </li>
+                    <li>
+                      <code>cursor</code> <em>(string | null)</em> — Cursor to
+                      show on the handle while dragging (e.g.,
+                      <code>"grab"</code>). <strong>Default:</strong>
+                      <code>"grab"</code> (set <code>null</code> to not change).
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+              <p class="note">
+                <strong>Notes:</strong> Dragging composes with animations; when
+                available, PromptJS uses the CSS <code>translate</code> property
+                for smoothness. If you enable dragging on mobile, ensure the
+                chosen handle doesn’t interfere with inner scrolling.
+              </p>
+              <pre><code class="language-js">PromptJS.Modal.open({
+  title: "Draggable dialog",
+  content: "Try dragging by the header.",
+  draggable: { handle: "header", axis: "both", withinViewport: true }
+});</code></pre>
+            </dd>
+          </dl>
+
+          <h3>Usage examples</h3>
+          <div class="grid-3">
+            <div class="demo-card">
+              <h3>Basic</h3>
+              <pre><code class="language-js">PromptJS.Modal.open({
+  kind: "info",
+  title: "Information",
+  content: "Everything is wired up!"
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="modal-basic">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#modals .demo-card:nth-of-type(1) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>Async action (prevent double submit)</h3>
+              <pre><code class="language-js">PromptJS.Modal.open({
+  kind: "question",
+  title: "Do a slow thing?",
+  content: "We'll fake a 1s async task.",
+  buttons: [
+    { id: "cancel", text: "Cancel", variant: "neutral" },
+    { id: "go", text: "Do it", variant: "primary", onClick: async () =&gt; {
+        await new Promise(r =&gt; setTimeout(r, 1000));
+      } }
+  ],
+  onClose: (reason) =&gt; console.log("Closed by:", reason)
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="modal-async">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#modals .demo-card:nth-of-type(2) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>Live update</h3>
+              <pre><code class="language-js">const inst = PromptJS.Modal.open({
+  title: "Downloading…", content: "0%"
+});
+let i = 0;
+const t = setInterval(() =&gt; {
+  i += 10;
+  inst.update({ content: i + "%" });
+  if (i &gt;= 100) { clearInterval(t); inst.update({ title: "Done!", content: "Complete." }); }
+}, 200);</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="modal-update">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#modals .demo-card:nth-of-type(3) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <details>
+            <summary>Notes &amp; best practices</summary>
+            <ul>
+              <li>
+                For forms, consider disabling <code>closeOnBackdrop</code> to
+                avoid accidental dismiss.
+              </li>
+              <li>
+                Provide <code>ariaLabel</code> when omitting a visible
+                <code>title</code>.
+              </li>
+              <li>
+                Use modest values for <code>surfaceAlpha</code> and
+                <code>dialogBlurPx</code> to keep text legible.
+              </li>
+              <li>
+                In “reject” concurrency mode, opening a second modal
+                throws—useful for catching programming errors.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- Dialog Helpers -->
+        <section id="dialogs">
+          <h2>Dialog helpers</h2>
+          <p>
+            Thin, promise-based wrappers over <code>Modal.open()</code> for
+            common flows. They handle labels and close reasons for you and
+            return easy-to-use values.
+          </p>
+
+          <h3>APIs</h3>
+          <dl class="kv">
+            <dt>
+              <code
+                >alert(message: string, opts?: { title?: string }) =&gt;
+                Promise&lt;void&gt;</code
+              >
+            </dt>
+            <dd>
+              Shows a simple dialog with a single “OK” button (labeled from the
+              current i18n pack). Resolves when the user dismisses via the
+              button, ESC, or backdrop (default behaviors enabled). Use for
+              short confirmations like “Saved successfully.”
+            </dd>
+
+            <dt>
+              <code
+                >confirm(message: string, extra?: { title?: string; yesText?:
+                string; noText?: string; includeCancel?: boolean }) =&gt;
+                Promise&lt;boolean&gt;</code
+              >
+            </dt>
+            <dd>
+              Asks a yes/no question and resolves to <code>true</code> for
+              “Yes”, <code>false</code> for “No”. If
+              <code>includeCancel</code> is set, a “Cancel” button is added and
+              both ESC and backdrop map to cancel. Customize labels via
+              <code>yesText</code>/<code>noText</code>.
+            </dd>
+
+            <dt>
+              <code
+                >question(opts: { title?: string; message: string; buttons:
+                Array&lt;{ id: string; text: string; variant?: string }&gt;;
+                escReturns?: string | null; backdropReturns?: string | null })
+                =&gt; Promise&lt;{ id: string }&gt;</code
+              >
+            </dt>
+            <dd>
+              Presents a set of labeled choices and resolves with the
+              <code>id</code> of the clicked button. Map ESC or backdrop to an
+              id using <code>escReturns</code> /
+              <code>backdropReturns</code> (set to <code>null</code>
+              to disable those routes).
+            </dd>
+          </dl>
+
+          <h3>Examples</h3>
+          <div class="grid-3">
+            <div class="demo-card">
+              <h3>alert()</h3>
+              <pre><code class="language-js">await PromptJS.alert("Saved successfully.", { title: "Success" });</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="dlg-alert">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#dialogs .demo-card:nth-of-type(1) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>confirm()</h3>
+              <pre><code class="language-js">const ok = await PromptJS.confirm("Delete this item?", {
+  title: "Confirm", includeCancel: true
+});
+if (ok) { /* proceed */ }</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="dlg-confirm">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#dialogs .demo-card:nth-of-type(2) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>question()</h3>
+              <pre><code class="language-js">const res = await PromptJS.question({
+  title: "Pick one",
+  message: "Choose:",
+  buttons: [
+    { id: "a", text: "Option A", variant: "primary" },
+    { id: "b", text: "Option B" }
+  ],
+  escReturns: "a",
+  backdropReturns: "b"
+});
+// res.id === "a" | "b"</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="dlg-question">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#dialogs .demo-card:nth-of-type(3) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <details>
+            <summary>Notes & guidance</summary>
+            <ul>
+              <li>
+                Use <code>alert</code> for single-action acknowledgements. If
+                the user can proceed in multiple ways, prefer
+                <code>question()</code>.
+              </li>
+              <li>
+                For destructive actions, <code>confirm</code> with custom labels
+                (e.g., “Delete” / “Keep”) communicates intent better than
+                “Yes/No”.
+              </li>
+              <li>
+                Map ESC/backdrop to explicit outcomes in
+                <code>question()</code> for deterministic flows.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- Modal.bare() -->
+        <section id="modal-bare">
+          <h2>Modal.bare()</h2>
+          <p>
+            <code>PromptJS.Modal.bare(options)</code> renders a modal without
+            header/footer chrome. You control the content entirely—great for
+            custom layouts, drawers, and lightweight overlays. It returns
+            <code>{ id, close(result?) }</code>. Unlike
+            <code>Modal.open()</code>, there’s no built-in
+            <code>update()</code> (you own the DOM inside).
+          </p>
+
+          <h3>Signature</h3>
+          <pre><code class="language-ts">function Modal.bare(options?: {
+  // Chrome
+  windowed?: boolean;           // default: true (use default modal window surface)
+  surfaceClass?: string;        // optional extra class on surface
+  contentClass?: string;        // optional extra class on content host
+
+  // Content
+  content?: string | Node;      // sanitized unless unsafeHTML
+  unsafeHTML?: boolean;
+
+  // Visuals & behavior
+  surfaceAlpha?: number;
+  dialogBlurPx?: number;        // blur behind translucent surface, if windowed
+  backdropBlurPx?: number;      // overlay blur
+  animate?: boolean;            // overrides config.animation.enable
+  closeOnEsc?: boolean;         // default: true
+  closeOnBackdrop?: boolean;    // default: true
+  trapFocus?: boolean;          // default: true
+  ariaLabel?: string;           // accessible name when no visible title
+  draggable?: boolean | {       // works on desktop; see note below
+    handle?: "header" | string | HTMLElement;
+    axis?: "x" | "y" | "both";
+    withinViewport?: boolean;
+    disableOnMobile?: boolean;
+    cursor?: string | null;
+  };
+
+  // Lifecycle & concurrency
+  onOpen?: (inst: ModalInstance) => void;
+  onClose?: (result?: unknown) => void;
+  concurrency?: "queue" | "reject";
+}) => { id: string; close: (result?: unknown) => void };</code></pre>
+
+          <p class="note">
+            <strong>Draggable note:</strong> In bare mode there is no header by
+            default. If you enable <code>draggable</code>, provide a
+            <code>handle</code> selector or element found within your content
+            (e.g., <code>".my-handle"</code>).
+          </p>
+
+          <h3>Examples</h3>
+          <div class="grid-3">
+            <div class="demo-card">
+              <h3>Bare overlay (no chrome)</h3>
+              <pre><code class="language-js">const box = document.createElement("div");
+box.innerHTML = `
+  &lt;div style="display:grid;gap:12px;max-width:360px"&gt;
+    &lt;h3 style="margin:0"&gt;Hello from bare()&lt;/h3&gt;
+    &lt;p style="margin:0"&gt;No header/footer chrome—just your content.&lt;/p&gt;
+    &lt;button id="close-bare" class="btn"&gt;Close&lt;/button&gt;
+  &lt;/div&gt;`;
+
+const inst = PromptJS.Modal.bare({
+  windowed: false,                // full overlay, content controls its own spacing
+  content: box,
+  backdropBlurPx: 2               // optional overlay blur
+});
+
+box.querySelector("#close-bare").addEventListener("click", () => inst.close("ok"));</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="bare-overlay">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#modal-bare .demo-card:nth-of-type(1) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>Windowed, translucent</h3>
+              <pre><code class="language-js">const panel = document.createElement("div");
+panel.innerHTML = `
+  &lt;div style="display:grid;gap:10px"&gt;
+    &lt;div style="font-weight:600"&gt;Translucent card&lt;/div&gt;
+    &lt;p style="margin:0"&gt;Use surfaceAlpha + dialogBlurPx.&lt;/p&gt;
+    &lt;button id="close-card" class="btn"&gt;Close&lt;/button&gt;
+  &lt;/div&gt;`;
+
+const inst = PromptJS.Modal.bare({
+  windowed: true,                 // card surface (still no header/footer)
+  content: panel,
+  surfaceAlpha: 0.9,
+  dialogBlurPx: 6,                // blur behind translucent surface
+  ariaLabel: "Translucent card"   // accessible name
+});
+
+panel.querySelector("#close-card").addEventListener("click", () => inst.close("ok"));</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="bare-windowed">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#modal-bare .demo-card:nth-of-type(2) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>Draggable (custom handle)</h3>
+              <pre><code class="language-js">const body = document.createElement("div");
+body.style.cssText = "padding:24px;";        
+body.innerHTML = `
+  &lt;div class="my-handle" style="cursor:grab;font-weight:600;margin-bottom:8px"&gt;Drag me&lt;/div&gt;
+  &lt;p style="margin:0 0 12px 0"&gt;Provide your own handle inside content.&lt;/p&gt;
+  &lt;button id="close-drag" class="btn"&gt;Close&lt;/button&gt;`;
+
+const inst = PromptJS.Modal.bare({
+  windowed: true,
+  content: body,
+  draggable: { handle: ".my-handle", cursor: "grab" }
+});
+
+body.querySelector("#close-drag").addEventListener("click", () => inst.close("ok"));</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="bare-draggable">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#modal-bare .demo-card:nth-of-type(3) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <details>
+            <summary>Tips</summary>
+            <ul>
+              <li>
+                Use <code>windowed: false</code> for “pure overlay” patterns
+                (spotlight, lightbox, etc.).
+              </li>
+              <li>
+                Add your own close controls inside the content and call
+                <code>inst.close()</code>.
+              </li>
+              <li>
+                Pair <code>surfaceAlpha &lt; 1</code> with a small
+                <code>dialogBlurPx</code> for a gentle frosted look.
+              </li>
+              <li>
+                When draggable, set a clear handle element to avoid accidental
+                drags on interactive content.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- Toasts -->
+        <section id="toasts">
+          <h2>Toasts</h2>
+          <p>
+            Show a toast with <code>PromptJS.toast(options)</code>. It returns
+            <code>{ dismiss() }</code>. Toasts are placed into “slots” by
+            position (top/bottom × left/center/right). When a slot is at
+            capacity, PromptJS applies the configured behavior (<em>stack</em>,
+            <em>queue</em>, or <em>replace</em>).
+          </p>
+
+          <h3>Signature</h3>
+          <pre><code class="language-ts">function toast(options: {
+  kind?: "info" | "success" | "warning" | "error";
+  title?: string;                      // optional title
+  message: string;                     // sanitized HTML string
+  actions?: Array<{ text: string; onClick?: () => void }>;
+
+  position?: "top-left" | "top-center" | "top-right" |
+             "bottom-left" | "bottom-center" | "bottom-right";
+
+  behavior?: "stack" | "queue" | "replace";
+  maxVisible?: number;
+
+  timeoutMs?: number;                  // 0 = sticky
+  dismissible?: boolean;               // show close (×)
+
+  animations?: {
+    enter?: { preset?: "slide" | "fade" | "scale"; direction?: "left" | "right" | "up" | "down" | "auto"; distance?: "edge" | number | string; durationMs?: number; easing?: string; };
+    exit?:  { preset?: "slide" | "fade" | "scale"; direction?: "left" | "right" | "up" | "down" | "auto";                 durationMs?: number; easing?: string; };
+    timeoutCue?: {
+      show?: boolean;
+      position?: "top" | "bottom" | "left" | "right" | "cover";
+      direction?: "grow" | "shrink";   // NEW: default "shrink"
+      thicknessPx?: number;
+    };
+  };
+}) => { dismiss: () => void };</code></pre>
+
+          <h3>Field-by-field</h3>
+          <dl class="kv">
+            <dt><code>kind</code></dt>
+            <dd>
+              Optional semantic class for consistent styling (<code>info</code>,
+              <code>success</code>, <code>warning</code>, <code>error</code>).
+              Use it to keep colors uniform across the product.
+            </dd>
+
+            <dt><code>title</code></dt>
+            <dd>
+              Optional short heading shown <em>above</em> the toast content.
+              When provided, the toast lays out as two rows: the
+              <strong>title</strong> on top, and the
+              <strong>message + actions</strong> inline on the row below. The
+              title string is sanitized (like <code>message</code>) before
+              rendering. Leaving it unset keeps the classic single-row layout.
+            </dd>
+
+            <dt><code>message</code></dt>
+            <dd>
+              The toast body as an HTML string. PromptJS sanitizes the string
+              (inline text, basic formatting, lists, links). For interactive or
+              complex layouts, consider a modal—or create a custom component and
+              mount it yourself.
+            </dd>
+
+            <dt><code>actions</code></dt>
+            <dd>
+              Inline buttons such as “Undo” or “Retry”. The click handler runs
+              after the toast begins exit, keeping the UI responsive. Handlers
+              can show another toast or a modal if needed. Keep labels short.
+            </dd>
+
+            <dt><code>position</code></dt>
+            <dd>
+              Which slot to use. Defaults to
+              <code>config.toast.defaultPosition</code>. Centers use vertical
+              slide directions by default; corners use horizontal directions
+              when <code>direction: "auto"</code>.
+            </dd>
+
+            <dt><code>behavior</code> / <code>maxVisible</code></dt>
+            <dd>
+              Capacity policy per slot. <em>stack</em> appends and drops the
+              oldest when full; <em>queue</em> waits for space;
+              <em>replace</em> clears and shows only the newest.
+              <code>maxVisible</code> sets the per-slot cap.
+            </dd>
+
+            <dt><code>timeoutMs</code> / <code>dismissible</code></dt>
+            <dd>
+              Auto-dismiss delay and whether to show a close button. Set
+              <code>timeoutMs: 0</code> and <code>dismissible: false</code>
+              to use a toast like a lightweight “mini-modal” with actions.
+            </dd>
+
+            <dt><code>animations</code></dt>
+            <dd>
+              Per-toast overrides for motion and the time-remaining cue:
+              <div class="important">
+                <strong>Important:</strong> For <em>enter</em>,
+                <code>direction</code> means the edge the toast comes
+                <em>from</em>. For <em>exit</em>, <code>direction</code> means
+                the edge the toast goes <em>to</em>. Example (top-center, slide
+                down on enter and slide up on exit):
+                <code
+                  >enter: { preset: "slide", direction: "up", distance: "edge"
+                  }</code
+                >
+                and <code>exit: { preset: "slide", direction: "up" }</code>.
+              </div>
+              <ul>
+                <li>
+                  <em>enter</em> — <code>preset</code> (“slide” | “fade” |
+                  “scale”), optional <code>direction</code> (“left” | “right” |
+                  “up” | “down” | “auto”), optional
+                  <code>distance</code> (“edge” | number | CSS length), and
+                  phase-specific <code>durationMs</code>/<code>easing</code>.
+                  With <code>direction: "auto"</code>, PromptJS infers a
+                  sensible edge from the slot (centers use vertical; corners use
+                  horizontal). <code>distance: "edge"</code> slides from
+                  off-screen (centers use a subtler distance by default).
+                </li>
+                <li>
+                  <em>exit</em> — Same shape as <em>enter</em> (except
+                  <code>distance</code> is usually ignored for slide). A
+                  slightly shorter <code>durationMs</code> than enter often
+                  feels snappier.
+                </li>
+                <li>
+                  <code>timeoutCue</code> — Visual lifetime indicator:
+                  <ul>
+                    <li>
+                      <code>position</code>: “top” | “bottom” | “left” | “right”
+                      renders a thin bar; “cover” overlays a subtle veil.
+                    </li>
+                    <li>
+                      <code>direction</code>: “grow” | “shrink” controls
+                      progress — <em>grow</em> fills up, <em>shrink</em> counts
+                      down from full (default).
+                    </li>
+                    <li>
+                      <code>thicknessPx</code>: bar thickness for edge positions
+                      (ignored for “cover”).
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h3>Examples</h3>
+          <div class="grid-3">
+            <div class="demo-card">
+              <h3>Basic</h3>
+              <pre><code class="language-js">PromptJS.toast({
+  kind: "success",
+  message: "Saved user &lt;b&gt;John Doe&lt;/b&gt;."
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="toast-basic">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#toasts .demo-card:nth-of-type(1) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>Queue top-right</h3>
+              <pre><code class="language-js">PromptJS.config.update({
+  toast: { behavior: "queue", defaultPosition: "top-right", maxVisible: 2 }
+});
+for (let i = 1; i &lt;= 5; i++) {
+  PromptJS.toast({ kind: "info", message: "Queued " + i, timeoutMs: 1200 });
+}</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="toast-queue">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#toasts .demo-card:nth-of-type(2) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>Toast as a mini-modal</h3>
+              <pre><code class="language-js">PromptJS.toast({
+  kind: "success",
+  message: "&lt;b&gt;Hello&lt;/b&gt;, Saved successfully.",
+  actions: [
+    { text: "Undo", onClick: () =&gt; PromptJS.alert("Undo clicked") },
+    { text: "Close" }
+  ],
+  timeoutMs: 0,
+  dismissible: false
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="toast-mini-modal">
+                  Run
+                </button>
+                <button
+                  class="btn-copy"
+                  data-copy="#toasts .demo-card:nth-of-type(3) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <h3>Custom animation example</h3>
+          <div class="code-and-run">
+            <pre><code class="language-js">PromptJS.toast({
+  kind: "warning",
+  message: "Sliding in from the left.",
+  animations: {
+    enter: { preset: "slide", direction: "left", distance: "40vh", durationMs: 400, easing: "ease-out" },
+    exit:  { preset: "fade", durationMs: 160 }
+  }
+});</code></pre>
+            <div class="runbar">
+              <button class="btn-run" data-demo="toast-anim">Run</button>
+              <button
+                class="btn-copy"
+                data-copy="#toasts + h3 + .code-and-run pre code"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <details>
+            <summary>Notes & best practices</summary>
+            <ul>
+              <li>Use short copy; reserve complex interactions for modals.</li>
+              <li>
+                Pick <em>replace</em> for live “status now” indicators; pick
+                <em>queue</em> for event streams you don’t want to drop.
+              </li>
+              <li>
+                Each toast cleans up its DOM on exit; the wrapper then collapses
+                to avoid jumpy layouts.
+              </li>
+              <li>
+                Global motion can be disabled via
+                <code>config.animation.enable</code>; the library also respects
+                “reduced motion”.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- i18n -->
+        <section id="i18n">
+          <h2>Internationalization</h2>
+          <p>
+            PromptJS ships with a simple i18n registry. A “bundle” is a plain
+            object containing locale metadata, button labels, and default titles
+            used by modal kinds. You can register multiple bundles, switch at
+            runtime, or lazy-load on demand. All UI updates apply immediately.
+          </p>
+
+          <h3>Bundle shape</h3>
+          <pre><code class="language-ts">type I18nBundle = {
+  locale: string;            // e.g., "en", "bn", "fr-CA"
+  dir: "ltr" | "rtl" | "auto";
+  ok: string; cancel: string; yes: string; no: string; close: string; dismiss: string;
+  titles: { info: string; success: string; warning: string; error: string; question: string; };
+};</code></pre>
+
+          <h3>API</h3>
+          <dl class="kv">
+            <dt><code>PromptJS.i18n.register(bundle)</code></dt>
+            <dd>
+              Adds a bundle to the registry keyed by <code>bundle.locale</code>.
+              Does not switch the active language by itself.
+            </dd>
+
+            <dt><code>PromptJS.i18n.set(locale)</code></dt>
+            <dd>
+              Activates an already-registered bundle and updates labels/titles
+              immediately. Throws if the locale hasn’t been registered.
+            </dd>
+
+            <dt><code>PromptJS.i18n.use(locale, bundle?)</code></dt>
+            <dd>
+              Convenience: registers <em>and</em> switches in one call if you
+              pass a bundle. If the bundle was previously registered, it just
+              switches.
+            </dd>
+
+            <dt>
+              <code>PromptJS.i18n.load(locale, loader)</code> →
+              <code>Promise&lt;bundle&gt;</code>
+            </dt>
+            <dd>
+              Lazy-loads a bundle with a function that returns a Promise. On
+              resolve, the bundle is registered and made active. Useful for
+              code-splitting locales.
+            </dd>
+          </dl>
+
+          <h3>Examples</h3>
+          <div class="grid-3">
+            <div class="demo-card">
+              <h3>Register & switch</h3>
+              <pre><code class="language-js">PromptJS.i18n.register({
+  locale: "bn",
+  dir: "auto",
+  ok: "ঠিক আছে", cancel: "বাতিল", yes: "হ্যাঁ", no: "না", close: "বন্ধ", dismiss: "বন্ধ করুন",
+  titles: { info: "তথ্য", success: "সাফল্য", warning: "সতর্কতা", error: "ত্রুটি", question: "প্রশ্ন" }
+});
+PromptJS.i18n.set("bn");</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="i18n-bn">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#i18n .demo-card:nth-of-type(1) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <div class="demo-card">
+              <h3>One-liner</h3>
+              <pre><code class="language-js">PromptJS.i18n.use("fr", {
+  locale: "fr",
+  dir: "auto",
+  ok: "OK", cancel: "Annuler", yes: "Oui", no: "Non", close: "Fermer", dismiss: "Fermer",
+  titles: { info: "Information", success: "Succès", warning: "Avertissement", error: "Erreur", question: "Question" }
+});</code></pre>
+            </div>
+
+            <div class="demo-card">
+              <h3>Lazy load</h3>
+              <pre><code class="language-js">await PromptJS.i18n.load("es", async () =&gt; {
+  const bundle = await import("./i18n/es.bundle.js").then(m =&gt; m.default);
+  return bundle;
+});</code></pre>
+            </div>
+          </div>
+
+          <details>
+            <summary>Notes & guidance</summary>
+            <ul>
+              <li>
+                <strong>Directionality:</strong> Set
+                <code>dir</code> appropriately. “auto” mirrors the bundle’s
+                direction throughout PromptJS portals.
+              </li>
+              <li>
+                <strong>Titles:</strong> When opening a modal with
+                <code>kind</code> but no <code>title</code>, PromptJS uses
+                <code>i18n.titles[kind]</code>.
+              </li>
+              <li>
+                <strong>Dynamic apps:</strong> Switching locales at runtime
+                updates UI copy for new modals/toasts; existing ones won’t be
+                retrofitted.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- Theming -->
+        <section id="theming">
+          <h2>Theming & CSS hooks</h2>
+
+          <p>
+            You can switch themes at runtime with
+            <code>PromptJS.config.update()</code>. The value of
+            <code>theme</code> (<code>"auto"</code> | <code>"light"</code> |
+            <code>"dark"</code>) is applied to <code>&lt;html&gt;</code> and
+            mirrored onto PromptJS portals (<code>.pj-portal</code>,
+            <code>.pj-toasts</code>). The change takes effect immediately and
+            previous theme classes are removed to avoid conflicts.
+          </p>
+
+          <div class="code-and-run">
+            <pre><code class="language-js">// Switch theme globally
+PromptJS.config.update({ theme: "dark" });
+
+// Back to system preference
+PromptJS.config.update({ theme: "auto" });
+
+// Explicit light
+PromptJS.config.update({ theme: "light" });</code></pre>
+            <div class="runbar">
+              <button class="btn-run" data-demo="theme-dark">Dark</button>
+              <button class="btn-run" data-demo="theme-light">Light</button>
+              <button class="btn-run" data-demo="theme-auto">Auto</button>
+              <button class="btn-copy" data-copy="#theming pre code">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <p>
+            PromptJS exposes predictable class names and CSS variables so you
+            can theme surfaces without digging into internals. Theme selection
+            is handled via <code>config.theme</code> and mirrored on injected
+            roots.
+          </p>
+
+          <h3>Theme classes</h3>
+          <ul>
+            <li>
+              <code>pj-theme-auto</code>, <code>pj-theme-light</code>,
+              <code>pj-theme-dark</code> are applied to
+              <code>&lt;html&gt;</code>, <code>.pj-portal</code>, and
+              <code>.pj-toasts</code>.
+            </li>
+            <li>
+              Switching the theme removes the other theme classes to avoid
+              conflicts. Changes apply immediately.
+            </li>
+          </ul>
+
+          <h3>Structural hooks</h3>
+          <ul>
+            <li>
+              <code>.pj-portal</code> — modal root; stacking governed by
+              <code>config.zIndexBase</code>.
+            </li>
+            <li>
+              <code>.pj-toasts</code> — toast root; stacking is
+              <code>zIndexBase + toast.zBoost</code>.
+            </li>
+            <li>
+              Toast slot containers use position classes:
+              <code>.pj-toast-slot.pj-top-right</code>, etc.
+            </li>
+          </ul>
+
+          <h3>CSS variables and states</h3>
+          <dl class="kv">
+            <dt>Overlay</dt>
+            <dd>
+              <code>.pj-overlay</code> supports
+              <code>--pj-overlay-alpha</code> (opacity) and optionally
+              <code>--pj-overlay-blur</code>. The overlay may have
+              <code>.pj-overlay-in</code>/<code>.pj-overlay-out</code> during
+              transitions when animation is enabled.
+            </dd>
+
+            <dt>Modal surface</dt>
+            <dd>
+              <code>.pj-modal</code> accepts <code>--pj-modal-alpha</code> and
+              <code>--pj-modal-blur</code> based on options. When
+              <code>surfaceAlpha &lt; 1</code>,
+              <code>.pj-modal-translucent</code> is added for styling hooks.
+              Kinds add
+              <code>.pj-kind-info|success|warning|error|question</code>.
+            </dd>
+
+            <dt>Toast</dt>
+            <dd>
+              Individual toasts have <code>.pj-toast</code> with kind classes
+              (<code>.pj-info</code>, <code>.pj-success</code>, …), optional
+              <code>.dismissible</code>, and animation classes such as
+              <code>pj-enter-slide-right</code>, <code>pj-exit-fade</code>.
+              Timeout cues render as <code>.pj-timeout-bar.pj-bottom</code> or
+              <code>.pj-timeout-cover</code>.
+            </dd>
+
+            <dt>Scroll lock</dt>
+            <dd>
+              While a modal is open, the document has
+              <code>body.pj-lock</code> and a computed
+              <code>--pj-scrollbar</code> width to avoid layout shift.
+            </dd>
+          </dl>
+
+          <h3>Example: light/dark surface tweaks</h3>
+          <pre><code class="language-css">html.pj-theme-light .pj-modal { box-shadow: 0 10px 30px rgba(0,0,0,.12); }
+html.pj-theme-dark  .pj-modal { box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+
+.pj-modal.pj-kind-warning { border-color: rgba(255,176,32,.35); }
+.pj-toast.pj-success      { border-left: 3px solid #2ecc71; }</code></pre>
+
+          <details>
+            <summary>Notes & guidance</summary>
+            <ul>
+              <li>
+                Prefer subtle shadows/borders; users often see these elements
+                frequently.
+              </li>
+              <li>
+                Keep translucent + blur combinations gentle to preserve text
+                contrast.
+              </li>
+              <li>
+                When embedding inside a constrained container, set
+                <code>config.container</code> and adjust z-indices accordingly.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- A11y -->
+        <section id="a11y">
+          <h2>Accessibility</h2>
+          <p>
+            Accessibility is built into the primitives: dialogs are announced
+            correctly, focus is kept where it should be, and notifications don’t
+            steal focus but are still announced.
+          </p>
+
+          <h3>Dialogs</h3>
+          <ul>
+            <li>
+              <strong>Roles & properties:</strong> <code>role="dialog"</code>,
+              <code>aria-modal="true"</code>. Provide a visible
+              <code>title</code> or an <code>ariaLabel</code>.
+            </li>
+            <li>
+              <strong>Focus management:</strong> initial focus moves inside on
+              open; tab/shift-tab are trapped; focus is restored on close.
+            </li>
+            <li>
+              <strong>Keyboard & backdrop:</strong> ESC/backdrop close are
+              enabled by default; you can disable them per dialog for critical
+              flows.
+            </li>
+            <li>
+              <strong>Background hiding:</strong> siblings of the overlay
+              temporarily receive <code>aria-hidden="true"</code> to prevent
+              screen reader focus leakage.
+            </li>
+          </ul>
+
+          <h3>Toasts</h3>
+          <ul>
+            <li>
+              <strong>Live region:</strong> toasts use
+              <code>role="status"</code> with <code>aria-live="polite"</code> so
+              screen readers announce them without moving focus.
+            </li>
+            <li>
+              <strong>Dismissibility:</strong> show a close button for
+              non-ephemeral messages; keep labels short and unambiguous.
+            </li>
+          </ul>
+
+          <h3>Reduced motion</h3>
+          <ul>
+            <li>
+              When users prefer reduced motion, PromptJS minimizes animations
+              where possible (especially toast stack collapse).
+            </li>
+            <li>
+              You can also disable all animations via
+              <code>config.animation.enable = false</code> for specific
+              environments.
+            </li>
+          </ul>
+
+          <details>
+            <summary>Implementation tips</summary>
+            <ul>
+              <li>
+                For forms, disabling backdrop close can prevent accidental data
+                loss.
+              </li>
+              <li>
+                Use clear, action-oriented button labels (“Save”, “Discard”)
+                instead of ambiguous “OK/Cancel”.
+              </li>
+              <li>
+                Ensure color contrast meets WCAG guidelines in your theme
+                overrides.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- Performance -->
+        <section id="performance">
+          <h2>Performance</h2>
+          <p>
+            PromptJS keeps overhead low by reusing roots, minimizing layout
+            thrash, and keeping animations short and predictable. You can tune
+            behavior further with configuration.
+          </p>
+
+          <h3>What the library does</h3>
+          <ul>
+            <li>
+              <strong>Root reuse:</strong> Only one modal root and one toast
+              root are created and reused for the lifetime of the page.
+            </li>
+            <li>
+              <strong>Non-blocking teardown:</strong> Toasts animate their own
+              exit, then collapse their wrapper’s height/margins so reflow is
+              localized.
+            </li>
+            <li>
+              <strong>Lightweight listeners:</strong> Key handlers are attached
+              only while needed (e.g., ESC while a dialog is open).
+            </li>
+          </ul>
+
+          <h3>Your knobs</h3>
+          <ul>
+            <li>
+              <strong>Animation policy:</strong> Set
+              <code>config.animation.enable = false</code> to disable globally,
+              or override per call (<code>animate: false</code> for a modal).
+            </li>
+            <li>
+              <strong>Toast flow control:</strong> Use
+              <code>toast.behavior</code>
+              (<em>stack</em>/<em>queue</em>/<em>replace</em>) and
+              <code>maxVisible</code> to cap visual noise.
+            </li>
+            <li>
+              <strong>Z-index scope:</strong> Adjust <code>zIndexBase</code> and
+              <code>toast.zBoost</code> if the host app has heavy layering.
+            </li>
+          </ul>
+
+          <h3>Recommended defaults</h3>
+          <pre><code class="language-js">PromptJS.config.update({
+  animation: { enable: true, durationMs: 160, easing: "ease" },
+  toast: { behavior: "stack", maxVisible: 3, defaultPosition: "top-center" }
+});</code></pre>
+
+          <details>
+            <summary>Debugging tips</summary>
+            <ul>
+              <li>Temporarily disable animations to isolate layout issues.</li>
+              <li>
+                Set <code>modal.concurrency = "reject"</code> during development
+                to catch accidental re-entrancy.
+              </li>
+              <li>
+                Audit large HTML strings; prefer Nodes for complex content to
+                avoid sanitizer overhead.
+              </li>
+            </ul>
+          </details>
+        </section>
+
+        <!-- Recipes -->
+        <section id="recipes">
+          <h2>Recipes</h2>
+          <p>
+            Practical snippets you can run as-is. Click <em>Run</em> to try
+            them; click <em>Copy</em> to grab the code.
+          </p>
+
+          <div class="grid-3">
+            <!-- Recipe 1: Form in a modal (async submit + validation) -->
+            <div class="demo-card">
+              <h3>Form in a modal (async submit + validation)</h3>
+              <pre><code class="language-js">// Create a real DOM form to bypass string sanitization
+const form = document.createElement("form");
+form.innerHTML = `
+  &lt;label style="display:block;margin:6px 0"&gt;
+    Name: &lt;input id="name" required style="width:100%; margin-top:8px;" /&gt;
+  &lt;/label&gt;
+  &lt;small&gt;Required. Press “Save” to simulate an async API call.&lt;/small&gt;`;
+
+const inst = PromptJS.Modal.open({
+  title: "Create user",
+  content: form,
+  buttons: [
+    { id: "cancel", text: "Cancel", variant: "neutral" },
+    {
+      id: "save",
+      text: "Save",
+      variant: "primary",
+      closeOnClick: false, // stay open until we decide to close
+      onClick: async () =&gt; {
+        const input = form.querySelector("#name");
+        const name = input.value.trim();
+        if (!name) { input.focus(); return; } // do NOT close
+        await new Promise((r) =&gt; setTimeout(r, 800)); // fake network
+        PromptJS.toast({ kind: "success", message: "User &lt;b&gt;" + name + "&lt;/b&gt; created." });
+        inst.close("save"); // close on success
+      },
+    },
+  ],
+  closeOnBackdrop: false,
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-form">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(1) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 2: 2-step wizard using inst.update -->
+            <div class="demo-card">
+              <h3>Two-step wizard (update content/buttons)</h3>
+              <pre><code class="language-js">let step = 1;
+
+const inst = PromptJS.Modal.open({
+  title: "Step 1 / 2",
+  content: "Choose where to go next.",
+  buttons: [
+    { id: "back", text: "Back", variant: "ghost", onClick: () =&gt; {}, closeOnClick: false },
+    {
+      id: "next",
+      text: "Next",
+      variant: "primary",
+      closeOnClick: false,
+      onClick: () =&gt; {
+        step = 2;
+        inst.update({
+          title: "Step 2 / 2",
+          content: "All set. Continue?",
+          buttons: [
+            {
+              id: "back",
+              text: "Back",
+              variant: "ghost",
+              closeOnClick: false,
+              onClick: () =&gt; {
+                step = 1;
+                inst.update({
+                  title: "Step 1 / 2",
+                  content: "Choose where to go next.",
+                  buttons: [
+                    { id: "back", text: "Back", variant: "ghost", onClick: () =&gt; {}, closeOnClick: false },
+                    { id: "next", text: "Next", variant: "primary", closeOnClick: false, onClick: () =&gt; {
+                        step = 2;
+                        inst.update({
+                          title: "Step 2 / 2",
+                          content: "All set. Continue?",
+                          buttons: [
+                            { id: "back", text: "Back", variant: "ghost", closeOnClick: false, onClick: () =&gt; {} },
+                            { id: "finish", text: "Finish", variant: "primary" }
+                          ]
+                        });
+                      } },
+                  ],
+                });
+              },
+            },
+            { id: "finish", text: "Finish", variant: "primary" },
+          ],
+        });
+      },
+    },
+  ],
+});</code></pre>
+
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-wizard">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(2) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 3: Status indicator using replace behavior -->
+            <div class="demo-card">
+              <h3>Status toast (replace behavior)</h3>
+              <pre><code class="language-js">const prev = PromptJS.config.get().toast;
+const prevBehavior = prev.behavior;
+const prevPos = prev.defaultPosition;
+
+PromptJS.config.update({ toast: { behavior: "replace", defaultPosition: "bottom-center" }});
+PromptJS.toast({ kind: "info", message: "Connecting…" });
+setTimeout(() =&gt; PromptJS.toast({ kind: "warning", message: "Still trying…" }), 900);
+setTimeout(() =&gt; {
+  PromptJS.toast({ kind: "success", message: "Connected." });
+  // restore shortly after the last toast shows
+  setTimeout(() =&gt; {
+    PromptJS.config.update({ toast: { behavior: prevBehavior, defaultPosition: prevPos } });
+  }, 800);
+}, 1800);</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-status">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(3) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 4: Retryable error toast with actions -->
+            <div class="demo-card">
+              <h3>Retryable error toast</h3>
+              <pre><code class="language-js">PromptJS.config.update({
+  toast: { behavior: "replace", defaultPosition: "top-center" },
+}); 
+PromptJS.toast({
+  kind: "error",
+  message: "Failed to save.",
+  actions: [
+    { text: "Retry", onClick: () =&gt; {
+        PromptJS.toast({ kind: "info", message: "Retrying…", timeoutMs: 1200 });
+        setTimeout(() =&gt; {
+          PromptJS.toast({ kind: "success", message: "Saved on retry." });
+        }, 1200);
+      } },
+    { text: "Dismiss" }
+  ],
+  timeoutMs: 0,
+  dismissible: true
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-retry">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(4) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 5: Undo pattern (sticky toast as mini-modal) -->
+            <div class="demo-card">
+              <h3>Undo pattern (sticky toast)</h3>
+              <pre><code class="language-js">PromptJS.config.update({
+  toast: { behavior: "replace", defaultPosition: "top-center" },
+}); 
+PromptJS.toast({
+  kind: "success",
+  message: "&lt;b&gt;Item archived&lt;/b&gt;.",
+  actions: [
+    { text: "Undo", onClick: () =&gt; PromptJS.toast({ kind: "info", message: "Restored." }) },
+    { text: "Close" }
+  ],
+  timeoutMs: 0,
+  dismissible: false
+});</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-undo">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(5) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 6: Destructive confirm with custom labels -->
+            <div class="demo-card">
+              <h3>Destructive confirm (custom labels)</h3>
+              <pre><code class="language-js">const ok = await PromptJS.confirm("Delete this repository?", {
+  title: "Delete repository",
+  yesText: "Delete",
+  noText: "Keep",
+  includeCancel: true
+});
+if (ok) {
+  PromptJS.toast({ kind: "success", message: "Repository deleted." });
+} else {
+  PromptJS.toast({ kind: "info", message: "Kept as-is.", timeoutMs: 1500 });
+}</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-destructive">
+                  Run
+                </button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(6) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 7: Mount inside a custom container -->
+            <div class="demo-card">
+              <h3>Custom container (mount inside a panel)</h3>
+              <pre><code class="language-js">// Create a host panel
+const host = document.createElement("div");
+host.style.cssText = "position:relative;min-height:160px;border:1px dashed #3a4253;padding:12px;border-radius:10px";
+host.innerHTML = "&lt;b&gt;Local mount:&lt;/b&gt; modals/toasts appear within this box.";
+document.querySelector("main.content")?.prepend(host);
+
+// Snapshot bits we touch
+const prevContainer = PromptJS.config.get().container;
+const prevZ = PromptJS.config.get().zIndexBase;
+
+// Point PromptJS at it
+PromptJS.config.update({ container: host, zIndexBase: 10, toast: { zBoost: 20 }});
+
+// Open a modal inside the panel
+PromptJS.Modal.open({ title: "Local modal", content: "I render inside the panel." });
+
+// Clean up / revert after a moment
+setTimeout(() =&gt; {
+  PromptJS.config.update({ container: prevContainer || null, zIndexBase: prevZ || 2000 });
+  host.remove();
+}, 3500);</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-container">
+                  Run
+                </button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(7) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+
+            <!-- Recipe 8: One-click locale switch -->
+            <div class="demo-card">
+              <h3>One-click locale switch</h3>
+              <pre><code class="language-js">const prevLocale = PromptJS.config.get().i18n.locale;
+
+PromptJS.i18n.use("de", {
+  locale: "de",
+  dir: "auto",
+  ok: "OK", cancel: "Abbrechen", yes: "Ja", no: "Nein",
+  close: "Schließen", dismiss: "Schließen",
+  titles: { info: "Information", success: "Erfolg", warning: "Warnung", error: "Fehler", question: "Frage" }
+});
+
+await PromptJS.alert("Sprache gewechselt.", { title: "Hinweis" });
+
+// Restore previous locale
+if (prevLocale &amp;&amp; prevLocale !== "de") {
+  PromptJS.i18n.set(prevLocale);
+} else {
+  PromptJS.i18n.set("en");
+}</code></pre>
+              <div class="runbar">
+                <button class="btn-run" data-demo="recipe-i18n">Run</button>
+                <button
+                  class="btn-copy"
+                  data-copy="#recipes .demo-card:nth-of-type(8) pre code"
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="react">
+          <h2>React bindings</h2>
+          <p>
+            The <code>@promptjs/react</code> package provides a small React
+            wrapper around <code>@promptjs/core</code>: a
+            <code>&lt;PromptProvider&gt;</code> to optionally scope portals to a
+            subtree, and a <code>usePrompt()</code> hook to access the API
+            (<code>config</code>, <code>Modal</code>, <code>toast</code>,
+            <code>alert</code>, <code>confirm</code>, <code>question</code>,
+            <code>i18n</code>, <code>version</code>).
+          </p>
+
+          <div class="important">
+            <strong>Heads up:</strong> You can call
+            <code>usePrompt()</code> without a provider; it returns the core
+            singletons. Use <code>&lt;PromptProvider scope&gt;</code> when you
+            want to mount PromptJS inside a specific React subtree (e.g., a
+            panel) and have it cleanly restore global config on unmount.
+          </div>
+
+          <h3>Install</h3>
+          <div class="code-and-run">
+            <pre><code class="language-bash">pnpm add @promptjs/react @promptjs/core
+# or
+npm i @promptjs/react @promptjs/core
+# or
+yarn add @promptjs/react @promptjs/core</code></pre>
+            <div class="runbar">
+              <button class="btn-copy" data-copy="#react pre code">Copy</button>
+            </div>
+          </div>
+
+          <h3>Quick start (Vite/CRA)</h3>
+          <pre><code class="language-tsx">// App.tsx
+import * as React from "react";
+import { PromptProvider, usePrompt } from "@promptjs/react";
+
+function DemoButtons() {
+  const { Modal, toast } = usePrompt();
+  return (
+    &lt;div style={{ display: "flex", gap: 8 }}&gt;
+      &lt;button onClick={() =&gt; Modal.open({ kind: "info", title: "Hello", content: "PromptJS + React!" })}&gt;
+        Open modal
+      &lt;/button&gt;
+      &lt;button onClick={() =&gt; toast({ kind: "success", message: "&lt;b&gt;Saved&lt;/b&gt; successfully." })}&gt;
+        Show toast
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default function App() {
+  return (
+    &lt;PromptProvider theme="auto"&gt;
+      &lt;DemoButtons /&gt;
+    &lt;/PromptProvider&gt;
+  );
+}</code></pre>
+
+          <h3>Scope to a container (local portals)</h3>
+          <p>
+            Use <code>scope</code> to mount modals/toasts inside the provider’s
+            wrapper. The provider sets <code>config.container</code> while
+            mounted and restores it on unmount.
+          </p>
+          <pre><code class="language-tsx">import { PromptProvider, usePrompt } from "@promptjs/react";
+
+function Panel() {
+  const { Modal, toast } = usePrompt();
+  return (
+    &lt;div style={{ border: "1px dashed #8aa", padding: 12, borderRadius: 10 }}&gt;
+      &lt;p&gt;&lt;b&gt;Local mount:&lt;/b&gt; Modals/toasts render inside this box.&lt;/p&gt;
+      &lt;button onClick={() =&gt; Modal.open({ title: "Local modal", content: "Inside panel" })}&gt;Open local modal&lt;/button&gt;
+      &lt;button onClick={() =&gt; toast({ message: "Local toast" })}&gt;Local toast&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export function ScopedExample() {
+  return (
+    &lt;PromptProvider scope theme="dark" zIndexBase={10}&gt;
+      &lt;Panel /&gt;
+    &lt;/PromptProvider&gt;
+  );
+}</code></pre>
+
+          <h3>Theming &amp; i18n from React</h3>
+          <pre><code class="language-tsx">import * as React from "react";
+import { PromptProvider, usePrompt } from "@promptjs/react";
+
+function LangSwitcher() {
+  const { i18n, alert } = usePrompt();
+  return (
+    &lt;button
+      onClick={async () =&gt; {
+        i18n.use("de", {
+          locale: "de",
+          dir: "auto",
+          ok: "OK", cancel: "Abbrechen", yes: "Ja", no: "Nein", close: "Schließen", dismiss: "Schließen",
+          titles: { info: "Information", success: "Erfolg", warning: "Warnung", error: "Fehler", question: "Frage" }
+        });
+        await alert("Sprache geändert.", { title: "Hinweis" });
+      }}
+    &gt;
+      Switch to German
+    &lt;/button&gt;
+  );
+}
+
+export function ThemedApp() {
+  const [theme, setTheme] = React.useState&lt;"auto" | "light" | "dark"&gt;("auto");
+  return (
+    &lt;PromptProvider theme={theme}&gt;
+      &lt;div style={{ display: "flex", gap: 8 }}&gt;
+        &lt;button onClick={() =&gt; setTheme("auto")}&gt;Auto&lt;/button&gt;
+        &lt;button onClick={() =&gt; setTheme("light")}&gt;Light&lt;/button&gt;
+        &lt;button onClick={() =&gt; setTheme("dark")}&gt;Dark&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;LangSwitcher /&gt;
+    &lt;/PromptProvider&gt;
+  );
+}</code></pre>
+
+          <h3>Next.js (App Router) notes</h3>
+          <ul>
+            <li>Use inside <em>client components</em> only.</li>
+            <li>You can lazy-load the provider to avoid SSR.</li>
+          </ul>
+          <pre><code class="language-tsx">// app/page.tsx
+"use client";
+
+import dynamic from "next/dynamic";
+const PromptProvider = dynamic(() =&gt; import("@promptjs/react").then(m =&gt; m.PromptProvider), { ssr: false });
+const usePrompt = () =&gt; require("@promptjs/react").usePrompt();
+
+export default function Page() {
+  const { Modal } = usePrompt();
+  return (
+    &lt;PromptProvider theme="auto"&gt;
+      &lt;button onClick={() =&gt; Modal.open({ title: "Next.js", content: "Client-only" })}&gt;Open&lt;/button&gt;
+    &lt;/PromptProvider&gt;
+  );
+}</code></pre>
+
+          <h3>API (React)</h3>
+          <dl class="kv">
+            <dt><code>&lt;PromptProvider /&gt;</code></dt>
+            <dd>
+              <ul>
+                <li>
+                  <code>theme?: "auto" | "light" | "dark"</code> — mirrors to
+                  <code>config.update({ theme })</code>. Default
+                  <code>"auto"</code>.
+                </li>
+                <li>
+                  <code>scope?: boolean</code> — when <code>true</code>, portals
+                  mount inside the provider wrapper and restore on unmount.
+                </li>
+                <li>
+                  <code>zIndexBase?: number</code> — base z-index to use while
+                  scoped. Default <code>2000</code>.
+                </li>
+              </ul>
+            </dd>
+            <dt><code>usePrompt()</code></dt>
+            <dd>
+              Returns
+              <code
+                >{ config, Modal, toast, alert, confirm, question, i18n, version
+                }</code
+              >. Works with or without a provider; the provider only affects
+              where portals mount and keeps theme/z-index in sync.
+            </dd>
+          </dl>
+
+          <p class="note">
+            <strong>TypeScript:</strong> types ship with the package
+            (<code>dist/index.d.ts</code>).
+          </p>
+        </section>
+
+        <!-- Reference -->
+        <section id="reference">
+          <h2>API reference (quick glance)</h2>
+          <div class="grid-2">
+            <div>
+              <h3>APIs</h3>
+              <ul class="mono">
+                <li><code>PromptJS.config.get()</code></li>
+                <li><code>PromptJS.config.update(partial)</code></li>
+                <li><code>PromptJS.Modal.open(options)</code></li>
+                <li><code>PromptJS.toast(options)</code></li>
+                <li><code>PromptJS.alert(message, opts?)</code></li>
+                <li><code>PromptJS.confirm(message, extra?)</code></li>
+                <li><code>PromptJS.question(opts)</code></li>
+                <li><code>PromptJS.i18n.register(bundle)</code></li>
+                <li><code>PromptJS.i18n.set(locale)</code></li>
+                <li><code>PromptJS.i18n.use(locale, bundle?)</code></li>
+                <li><code>PromptJS.i18n.load(locale, loader)</code></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Modal concurrency</h3>
+              <p>
+                <code>config.modal.concurrency</code>:
+                <code>"queue"</code> (default) or <code>"reject"</code>.
+              </p>
+              <p>
+                In <em>queue</em>, new modals wait their turn. In
+                <em>reject</em>, opening while one is active throws.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Changelog / Version -->
+        <section id="changelog">
+          <h2>Version & build</h2>
+          <p>Running build: <code id="version-inline">v0.0.0</code></p>
+          <ul>
+            <li>
+              Exports:
+              <code
+                >{ config, Modal, toast, alert, confirm, question, i18n, version
+                }</code
+              >
+            </li>
+            <li>CSS: <code>promptjs/promptjs.css</code></li>
+            <li>
+              JS: <code>promptjs/index.js</code> (or
+              <code>promptjs/dist/index.global.js</code>)
+            </li>
+          </ul>
+        </section>
+
+        <footer class="site-footer">
+          <p>
+            PromptJS Developer Guide • You can print this page for a compact
+            reference.
+          </p>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,193 @@
+/*
+ * PromptJS – Design Tokens
+ * Single source of truth for colors, radius, spacing, typography, motion, and sizes.
+ * Import this at the top of promptjs.css.
+ * Author: Iftekhar Mahmud Towhid (tlabs.im@gmail.com)
+ */
+
+/* --------------------------------------------------
+   Base (Light defaults)
+   -------------------------------------------------- */
+:root {
+  /* Typography */
+  --pj-font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --pj-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --pj-font-size: 14px;               /* base text size inside components */
+  --pj-line-height: 1.4;
+
+  /* Layout & Sizing */
+  --pj-radius-sm: 8px;
+  --pj-radius-md: 12px;
+  --pj-radius-xl: 16px;               /* used by modals */
+  --pj-spacing-1: 4px;
+  --pj-spacing-2: 8px;
+  --pj-spacing-3: 12px;
+  --pj-spacing-4: 16px;
+  --pj-spacing-6: 24px;
+  --pj-z-base: 2000;                  /* base z-index for overlays/toasts */
+  --pj-modal-sm: 480px;               /* CSS-side modal max-widths */
+  --pj-modal-md: 640px;
+  --pj-modal-lg: 800px;
+  --pj-modal-max-h: 70vh;             /* body max height */
+
+  /* Motion */
+  --pj-anim-duration: 180ms;
+  --pj-anim-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Elevation */
+  --pj-shadow-sm: 0 4px 12px rgba(0,0,0,0.12);
+  --pj-shadow-md: 0 8px 20px rgba(0,0,0,0.16);
+  --pj-shadow-lg: 0 10px 30px rgba(0,0,0,0.20);
+
+  /* Light color palette (defaults) */
+  --pj-bg: #ffffff;                    /* surface */
+  --pj-fg: #111827;                    /* foreground text */
+  --pj-muted: #f3f4f6;                 /* subtle surface (buttons, chips) */
+  --pj-border: #e5e7eb;                /* hairline borders */
+ 
+  --pj-overlay-surface-rgb: 0 0 0;
+  --pj-overlay-alpha: 0.6;               
+  --pj-overlay-blur: 0px;                /* backdrop blur */
+
+  --pj-modal-surface-rgb: 255 255 255;
+  --pj-modal-alpha: 1;          
+  --pj-modal-blur: 0px;
+
+  --pj-primary: #2563eb;               /* brand/action */
+  --pj-primary-contrast: #ffffff;      /* text on primary */
+  --pj-danger: #dc2626;                /* destructive */
+  --pj-danger-contrast: #ffffff;
+
+  /* Semantic notification hues */
+  --pj-info: #2563eb;
+  --pj-success: #16a34a;
+  --pj-warning: #d97706;
+  --pj-error: #dc2626;
+
+  /* Focus ring */
+  --pj-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  --pj-muted-hover: #eceff3;
+  --pj-enter-distance: 16px;              /* fallback small slide when JS doesn't set it */
+  --pj-timeout-cover: rgba(0,0,0,0.06);   /* subtle cover progress color on light */
+  --pj-timeout-bar: var(--pj-primary);    /* edge progress bar color */
+}
+
+/* --------------------------------------------------
+   Dark (auto via media query)
+   Users can also force dark with .pj-theme-dark
+   -------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pj-bg: #0b0f14;
+    --pj-fg: #e5e7eb;
+    --pj-muted: #111827;
+    --pj-border: #1f2937;
+    --pj-overlay-bg: rgba(0,0,0,0.6);
+    --pj-modal-surface-rgb: 12 16 24;
+
+    --pj-primary: #3b82f6;
+    --pj-primary-contrast: #0b0f14;
+    --pj-danger: #ef4444;
+    --pj-danger-contrast: #0b0f14;
+
+    --pj-info: #60a5fa;
+    --pj-success: #22c55e;
+    --pj-warning: #f59e0b;
+    --pj-error: #ef4444;
+    
+    --pj-ring: 0 0 0 3px rgba(96, 165, 250, 0.40);
+    --pj-muted-hover: #2a2f37;
+    --pj-enter-distance: 16px;
+    --pj-timeout-cover: rgba(255,255,255,0.08);
+    --pj-timeout-bar: var(--pj-primary);
+  }
+}
+
+/* --------------------------------------------------
+   Forced Theme Classes
+   Apply to <html> or <body> if app wants explicit theme
+   -------------------------------------------------- */
+.pj-theme-light {
+  --pj-bg: #ffffff;
+  --pj-fg: #111827;
+  --pj-muted: #f3f4f6;
+  --pj-border: #e5e7eb;
+  --pj-overlay-bg: rgba(0,0,0,0.48);
+  --pj-modal-surface-rgb: 255 255 255;
+
+  --pj-primary: #2563eb;
+  --pj-primary-contrast: #ffffff;
+  --pj-danger: #dc2626;
+  --pj-danger-contrast: #ffffff;
+
+  --pj-info: #2563eb;
+  --pj-success: #16a34a;
+  --pj-warning: #d97706;
+  --pj-error: #dc2626;
+
+  --pj-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  --pj-muted-hover: #eceff3;
+  --pj-enter-distance: 16px;              /* fallback small slide when JS doesn't set it */
+  --pj-timeout-cover: rgba(0,0,0,0.06);   /* subtle cover progress color on light */
+  --pj-timeout-bar: var(--pj-primary);    /* edge progress bar color */
+}
+
+.pj-theme-dark {
+  --pj-bg: #0b0f14;
+  --pj-fg: #e5e7eb;
+  --pj-muted: #111827;
+  --pj-border: #1f2937;
+  --pj-overlay-bg: rgba(0,0,0,0.6);
+  --pj-modal-surface-rgb: 12 16 24;
+
+  --pj-primary: #3b82f6;
+  --pj-primary-contrast: #0b0f14;
+  --pj-danger: #ef4444;
+  --pj-danger-contrast: #0b0f14;
+
+  --pj-info: #60a5fa;
+  --pj-success: #22c55e;
+  --pj-warning: #f59e0b;
+  --pj-error: #ef4444;
+
+  --pj-ring: 0 0 0 3px rgba(96, 165, 250, 0.40);
+  --pj-muted-hover: #2a2f37;
+  --pj-enter-distance: 16px;
+  --pj-timeout-cover: rgba(255,255,255,0.08);
+  --pj-timeout-bar: var(--pj-primary);
+}
+
+/* Auto class delegates to system preference */
+/* .pj-theme-auto {} */
+@media (prefers-color-scheme: dark) {
+  .pj-theme-auto {
+    --pj-bg: #0b0f14;
+    --pj-fg: #e5e7eb;
+    --pj-muted: #111827;
+    --pj-border: #1f2937;
+    --pj-overlay-bg: rgba(0,0,0,0.6);
+    --pj-modal-surface-rgb: 12 16 24;
+
+    --pj-primary: #3b82f6;
+    --pj-primary-contrast: #0b0f14;
+    --pj-danger: #ef4444;
+    --pj-danger-contrast: #0b0f14;
+
+    --pj-info: #60a5fa;
+    --pj-success: #22c55e;
+    --pj-warning: #f59e0b;
+    --pj-error: #ef4444;
+
+    --pj-ring: 0 0 0 3px rgba(96, 165, 250, 0.40);
+  }
+}
+
+/* --------------------------------------------------
+   Reduced Motion
+   -------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root, .pj-theme-light, .pj-theme-dark, .pj-theme-auto {
+    --pj-anim-duration: 0ms;
+    --pj-anim-ease: linear;
+  }
+}
