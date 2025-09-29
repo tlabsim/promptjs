@@ -1791,8 +1791,10 @@ body.querySelector("#close-drag").addEventListener("click", () => inst.close("ok
               <pre><code class="language-js">PromptJS.config.update({
   toast: { behavior: "queue", defaultPosition: "top-right", maxVisible: 2 }
 });
-for (let i = 1; i &lt;= 5; i++) {
-  PromptJS.toast({ kind: "info", message: "Queued " + i, timeoutMs: 1200 });
+for (let i = 0; i < 5; i++) {
+  setTimeout(() => {
+    PJ().toast({ kind: "info", message: "Queued " + (i + 1), timeoutMs: 2000 });
+  }, i * 800);
 }</code></pre>
               <div class="runbar">
                 <button class="btn-run" data-demo="toast-queue">Run</button>

@@ -16,5 +16,5 @@ export default defineConfig({
   define: {
     __PROMPTJS_VERSION__: JSON.stringify(pkg.version)
   },
-  onSuccess: 'postcss styles/promptjs.css -o styles/promptjs.css'
+  onSuccess: 'postcss styles/promptjs-raw.css -o styles/promptjs.css'
 });

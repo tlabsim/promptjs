@@ -265,7 +265,8 @@
         content: (() => {
           const box = document.createElement("div");
 
-          box.style.cssText = "padding:16px 18px; background:rgba(15,20,32,.75); border: 1px solid #31405a; box-shadow:0 8px 24px rgba(0,0,0,.3);";
+          box.style.cssText =
+            "padding:16px 18px; background:rgba(15,20,32,.75); border: 1px solid #31405a; box-shadow:0 8px 24px rgba(0,0,0,.3);";
           box.innerHTML = `
         <h3 style="margin:0 0 6px">Bare modal</h3>
         <p style="margin:0 0 10px;color:#a9b3c9">No header/footer chrome — perfect for custom layouts.</p>
@@ -300,15 +301,17 @@
     "qd-toast-queue": () => {
       if (!hasPrompt()) return;
       // No global config change — specify per toast
-      for (let i = 1; i <= 5; i++) {
-        PJ().toast({
-          kind: "info",
-          message: "Queued " + i,
-          timeoutMs: 1200,
-          position: "top-right",
-          behavior: "queue",
-          maxVisible: 2,
-        });
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          PJ().toast({
+            kind: "info",
+            message: "Queued " + (i + 1),
+            timeoutMs: 2000,
+            position: "top-right",
+            behavior: "queue",
+            maxVisible: 3,
+          });
+        }, i * 800);
       }
     },
 
@@ -583,8 +586,10 @@
           maxVisible: 2,
         },
       });
-      for (let i = 1; i <= 5; i++) {
-        PJ().toast({ kind: "info", message: "Queued " + i, timeoutMs: 1200 });
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          PJ().toast({ kind: "info", message: "Queued " + (i + 1), timeoutMs: 2000 });
+        }, i * 800);
       }
 
       restoreToastConfig(snap, 6000);

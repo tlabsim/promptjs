@@ -233,6 +233,17 @@ declare const config: {
     onChange(fn: () => void): () => void;
 };
 
+/**
+ * PromptJS – modal.ts
+ * Core modal dialog implementation.
+ * Author: Iftekhar Mahmud Towhid (tlabs.im@gmail.com)
+ *
+ * Exposes:
+ *   - open(options): standard modal dialog with header, content, footer
+ *  - bare(options): bare modal surface with content only
+ *  - Both return a ModalInstance with .close(), .contentEl, and .update()
+ */
+
 declare function open(options: ModalOptions): ModalInstance;
 declare function bare(options?: BareModalOptions): ModalInstance;
 
