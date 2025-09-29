@@ -1,4 +1,16 @@
-// modal.ts
+/**
+ * PromptJS – modal.ts
+ * Core modal dialog implementation.
+ * Author: Iftekhar Mahmud Towhid (tlabs.im@gmail.com)
+ *
+ * Exposes:
+ *   - open(options): standard modal dialog with header, content, footer
+ *  - bare(options): bare modal surface with content only
+ *  - Both return a ModalInstance with .close(), .contentEl, and .update()
+ */
+ 
+
+
 import { sanitize } from "./sanitize";
 import { createSurface, type CoreOptions } from "./modal-core";
 import type {

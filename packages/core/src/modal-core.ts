@@ -1,4 +1,9 @@
-// modal-core.ts
+/**
+ * PromptJS – modal-core.ts
+ * Core modal dialog surface creation and management.
+ * Author: Iftekhar Mahmud Towhid (tlabs.im@gmail.com)
+ */ 
+
 import { uid } from "./utils";
 import { config } from "./config";
 import { manager } from "./manager";

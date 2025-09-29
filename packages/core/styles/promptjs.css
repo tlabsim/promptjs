@@ -90,7 +90,6 @@
 .pj-modal-out { animation: pj-modal-out var(--pj-anim-duration, 180ms) var(--pj-anim-ease, ease) both; }
 
 
-
 /* Toast layer and slots. Manager sets position/anchors inline; these are fallbacks. */
 .pj-toasts { position: fixed; inset: 0; pointer-events: none; }
 .pj-toast-slot { position: fixed; display: flex; flex-direction: column; gap: var(--pj-toast-gap, 10px); pointer-events: none; }
@@ -114,10 +113,15 @@
 
 /* Button inside toast */
 /* use slight contrasted border  color and high contrast text color */
-.pj-toast.pj-info  .pj-toast-close { background-color: color-mix(in srgb, var(--pj-info) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-info) 80%, #000 10%); color: color-mix(in srgb, var(--pj-info) 75%, #000 25%); }
-.pj-toast.pj-success .pj-toast-close { background-color: color-mix(in srgb, var(--pj-success) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-success) 80%, #000 10%); color: color-mix(in srgb, var(--pj-success) 75%, #000 25%); }
-.pj-toast.pj-warning .pj-toast-close { background-color: color-mix(in srgb, var(--pj-warning) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-warning) 80%, #000 10%); color: color-mix(in srgb, var(--pj-warning) 25%, #000 75%); }
-.pj-toast.pj-error   .pj-toast-close { background-color: color-mix(in srgb, var(--pj-error) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-error) 80%, #000 10%); color: color-mix(in srgb, var(--pj-error) 60%, #000 40%); }
+.pj-toast.pj-info    .pj-toast-close { background-color: color-mix(in srgb, var(--pj-info) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-info) 90%, #000 10%); color: color-mix(in srgb, var(--pj-info) 75%, #000 25%); }
+.pj-toast.pj-success .pj-toast-close { background-color: color-mix(in srgb, var(--pj-success) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-success) 90%, #000 10%); color: color-mix(in srgb, var(--pj-success) 75%, #000 25%); }
+.pj-toast.pj-warning .pj-toast-close { background-color: color-mix(in srgb, var(--pj-warning) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-warning) 90%, #000 10%); color: color-mix(in srgb, var(--pj-warning) 25%, #000 75%); }
+.pj-toast.pj-error   .pj-toast-close { background-color: color-mix(in srgb, var(--pj-error) 50%, #fff 50%) !important; border-color: color-mix(in srgb, var(--pj-error) 90%, #000 10%); color: color-mix(in srgb, var(--pj-error) 60%, #000 40%); }
+
+.pj-toast.pj-info    .pj-toast-close:hover { background-color: color-mix(in srgb, var(--pj-info) 40%, #fff 60%) !important; }
+.pj-toast.pj-success .pj-toast-close:hover { background-color: color-mix(in srgb, var(--pj-success) 40%, #fff 660%) !important;  }
+.pj-toast.pj-warning .pj-toast-close:hover { background-color: color-mix(in srgb, var(--pj-warning) 40%, #fff 60%) !important; }
+.pj-toast.pj-error   .pj-toast-close:hover { background-color: color-mix(in srgb, var(--pj-error) 40%, #fff 50%) !important;  }
 
 .pj-toast-btn{ padding:.5rem 1rem; border-radius:.5rem; background:var(--pj-muted); border: 1px solid var(--pj-border); color: inherit; }
 .pj-toast-btn:hover { background: var(--pj-muted-hover); }
