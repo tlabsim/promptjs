@@ -355,7 +355,7 @@ export function toast(opts: ToastOptions): { dismiss: () => void } {
 
   // Base toast element (animates in/out inside the container)
   const el = document.createElement("div");
-  el.className = `pj-toast pj-${opts.kind || "info"} ${
+  el.className = `pj-toast pj-${opts.kind || "neutral"} ${
     opts.dismissible ?? cfg.toast.defaultDismissible ? "dismissible" : ""
   }`;
   el.setAttribute("role", "status");

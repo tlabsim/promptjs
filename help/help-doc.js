@@ -348,7 +348,7 @@
     "qd-toast-sticky": () => {
       if (!hasPrompt()) return;
       PJ().toast({
-        kind: "success",
+        kind: 'neutral',
         message: "<b>Item archived</b>.",
         actions: [
           {

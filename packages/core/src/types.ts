@@ -25,7 +25,7 @@ export interface ButtonDef {
 export type Theme = 'light' | 'dark' | 'auto';
 export type ModalConcurrency = 'queue' | 'reject';
 
-export type NotifyKind = 'info' | 'success' | 'warning' | 'error' | 'question';
+export type NotifyKind = 'neutral' | 'info' | 'success' | 'warning' | 'error' | 'question';
 
 export type ModalDraggable =
   | boolean

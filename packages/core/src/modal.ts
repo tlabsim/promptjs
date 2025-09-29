@@ -58,10 +58,13 @@ export function open(options: ModalOptions): ModalInstance {
     renderHeader(inst, header) {
       const hasTitle =
         typeof options.title === "string" && options.title.length > 0;
+      const geti18Title = (kind: string) => {
+        return (i18n.titles as any)[kind] || "";
+      };
       const computedTitle = hasTitle
         ? options.title
         : options.kind
-        ? i18n.titles[options.kind]
+        ? geti18Title(options.kind)
         : undefined;
 
       if (computedTitle) {

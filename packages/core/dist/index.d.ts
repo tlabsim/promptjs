@@ -21,7 +21,7 @@ interface ButtonDef {
 }
 type Theme = 'light' | 'dark' | 'auto';
 type ModalConcurrency = 'queue' | 'reject';
-type NotifyKind = 'info' | 'success' | 'warning' | 'error' | 'question';
+type NotifyKind = 'neutral' | 'info' | 'success' | 'warning' | 'error' | 'question';
 type ModalDraggable = boolean | {
     handle?: "header" | string | HTMLElement;
     axis?: "x" | "y" | "both";
