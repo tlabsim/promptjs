@@ -6,6 +6,7 @@ import type {
   alert as coreAlert,
   confirm as coreConfirm,
   question as coreQuestion,
+  prompt as corePrompt,
   i18n as coreI18n,
   version as coreVersion
 } from "@tlabsinc/promptjs-core";
@@ -30,6 +31,7 @@ export interface PromptContextValue {
   alert: typeof coreAlert;
   confirm: typeof coreConfirm;
   question: typeof coreQuestion;
+  prompt: typeof corePrompt;
   i18n: typeof coreI18n;
   version: typeof coreVersion;
 }

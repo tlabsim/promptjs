@@ -6,6 +6,7 @@ import {
   alert,
   confirm,
   question,
+  prompt,
   i18n,
   version
 } from "@tlabsinc/promptjs-core";
@@ -47,7 +48,7 @@ export const PromptProvider: React.FC<PromptProviderProps> = ({
   }, [scope, zIndexBase]);
 
   const value = React.useMemo<PromptContextValue>(
-    () => ({ config, Modal, toast, alert, confirm, question, i18n, version }),
+    () => ({ config, Modal, toast, alert, confirm, question, prompt, i18n, version }),
     []
   );
 
@@ -66,7 +67,7 @@ export function usePrompt(): PromptContextValue {
   if (!ctx) {
     // Allow hooks to work without a provider by returning the core API directly.
     // This keeps usage friction very low.
-    return { config, Modal, toast, alert, confirm, question, i18n, version };
+    return { config, Modal, toast, alert, confirm, question, prompt, i18n, version };
   }
   return ctx;
 }

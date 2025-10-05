@@ -43,6 +43,7 @@
   --pj-bg: #ffffff;                    /* surface */
   --pj-fg: #111827;                    /* foreground text */
   --pj-muted: #f3f4f6;                 /* subtle surface (buttons, chips) */
+  
   --pj-border: #e5e7eb;                /* hairline borders */
  
   --pj-overlay-surface-rgb: 0 0 0;

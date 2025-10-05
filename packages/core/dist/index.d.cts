@@ -73,6 +73,45 @@ interface ModalInstance {
     readonly el: HTMLDivElement;
     readonly contentEl: HTMLElement;
 }
+interface AlertOptions {
+    title?: string;
+    kind?: NotifyKind;
+    okText?: string;
+}
+interface ConfirmOptions {
+    title?: string;
+    kind?: NotifyKind;
+    yesText?: string;
+    noText?: string;
+    includeCancel?: boolean;
+    cancelText?: string;
+}
+interface PromptOptions {
+    title?: string;
+    kind?: NotifyKind;
+    okText?: string;
+    cancelText?: string;
+    placeholder?: string;
+    inputType?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';
+    required?: boolean;
+    maxLength?: number;
+    pattern?: string;
+    validator?: (value: string) => boolean | string;
+}
+interface QuestionButton {
+    id: string;
+    text: string;
+    variant?: ButtonVariant;
+}
+interface QuestionOptions {
+    title?: string;
+    message: string;
+    kind?: NotifyKind;
+    buttons: QuestionButton[];
+    defaultId?: string;
+    escReturns?: string | null;
+    backdropReturns?: string | null;
+}
 /** Where the toast appears. */
 type ToastPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
 /** How multiple toasts are handled at a position. */
@@ -298,6 +337,7 @@ declare function confirm(message: string, extra?: Partial<Parameters<typeof ques
 declare function alert(message: string, opts?: {
     title?: string;
 }): Promise<void>;
+declare function prompt(message: string, defaultValue?: string, opts?: Partial<PromptOptions>): Promise<string | null>;
 
 /**
  * PromptJS – i18n.ts
@@ -350,4 +390,4 @@ declare global {
     }
 }
 
-export { modal as Modal, type ModalInstance, type ModalOptions, alert, config, confirm, i18n, question, toast, version };
+export { type AlertOptions, type ConfirmOptions, modal as Modal, type ModalInstance, type ModalOptions, type PromptOptions, type QuestionOptions, type ToastOptions, alert, config, confirm, i18n, prompt, question, toast, version };

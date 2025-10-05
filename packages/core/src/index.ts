@@ -11,7 +11,7 @@
 import { config } from './config';
 import * as Modal from './modal';
 import { toast } from './toast';
-import { question, confirm, alert } from './dialogs';
+import { question, confirm, alert, prompt } from './dialogs';
 import * as i18n from './i18n';
 
 declare const __PROMPTJS_VERSION__: string | undefined;
@@ -21,12 +21,20 @@ export const version =
     ? __PROMPTJS_VERSION__
     : 'dev';
 
-export { config, Modal, toast, question, confirm, alert, i18n };
-export type { ModalOptions, ModalInstance } from "./types";
+export { config, Modal, toast, question, confirm, alert, prompt, i18n };
+export type { 
+  ModalOptions, 
+  ModalInstance,
+  AlertOptions,
+  ConfirmOptions,
+  PromptOptions,
+  QuestionOptions,
+  ToastOptions
+} from "./types";
 
 declare global { interface Window { PromptJS?: any } }
 
 if (typeof window !== 'undefined') {
-  const api = { config, Modal, toast, question, confirm, alert, i18n, version } as const;
+  const api = { config, Modal, toast, question, confirm, alert, prompt, i18n, version } as const;
   window.PromptJS = Object.freeze(api);
 }

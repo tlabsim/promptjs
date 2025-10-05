@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PromptJS - Prompt Demo</title>
+  <link rel="stylesheet" href="styles/promptjs.css">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f9fafb;
+    }
+    h1 {
+      color: #111827;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+    .demo-section {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .demo-section h2 {
+      margin-top: 0;
+      color: #374151;
+      font-size: 18px;
+    }
+    .demo-section p {
+      color: #6b7280;
+      margin: 8px 0 16px 0;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    button.secondary {
+      background: #6b7280;
+    }
+    button.secondary:hover {
+      background: #4b5563;
+    }
+    .result {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f3f4f6;
+      border-left: 3px solid #3b82f6;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      display: none;
+    }
+    .result.show {
+      display: block;
+    }
+    .result.null {
+      border-left-color: #ef4444;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>PromptJS - prompt() Demo</h1>
+  <p class="subtitle">Drop-in replacement for native <code>window.prompt()</code> with async/await and modern styling</p>
+
+  <div class="demo-section">
+    <h2>Basic Prompt</h2>
+    <p>Simple text input dialog, just like native prompt()</p>
+    <button onclick="basicPrompt()">Try Basic Prompt</button>
+    <div id="result1" class="result"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Prompt with Default Value</h2>
+    <p>Pre-fill the input with a default value</p>
+    <button onclick="promptWithDefault()">Prompt with Default</button>
+    <div id="result2" class="result"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Required Input</h2>
+    <p>Force user to enter something (validation)</p>
+    <button onclick="requiredPrompt()">Required Prompt</button>
+    <div id="result3" class="result"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Email Input with Validation</h2>
+    <p>Custom input type and pattern validation</p>
+    <button onclick="emailPrompt()">Email Prompt</button>
+    <div id="result4" class="result"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Custom Validator</h2>
+    <p>Use a custom function to validate input</p>
+    <button onclick="customValidatorPrompt()">Username Prompt</button>
+    <div id="result5" class="result"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Password Input</h2>
+    <p>Hidden input for sensitive data</p>
+    <button onclick="passwordPrompt()">Password Prompt</button>
+    <div id="result6" class="result"></div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Comparison: Native vs PromptJS</h2>
+    <p>Compare the native browser prompt with PromptJS</p>
+    <button onclick="nativePrompt()">Native prompt()</button>
+    <button class="secondary" onclick="promptjsPrompt()">PromptJS prompt()</button>
+    <div id="result7" class="result"></div>
+  </div>
+
+  <script src="./dist/index.global.js"></script>
+
+  <script type="module">
+    if (!window.PromptJS) {
+        alert(
+          "PromptJS global not found. Check that dist/index.global.js was built and the path is correct."
+        );
+      }
+    
+    const {
+        toast,
+        Modal,
+        config,
+        i18n,
+        prompt: pjPrompt,
+        alert: pjAlert,
+        confirm: pjConfirm,
+        question: pjQuestion,
+      } = window.PromptJS || {};
+
+    config.update({ theme: 'light' });
+
+    window.basicPrompt = async function() {
+      const result = document.getElementById('result1');
+      const name = await pjPrompt("What's your name?");
+      
+      result.className = 'result show' + (name === null ? ' null' : '');
+      result.textContent = name === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${name}"`;
+    };
+
+    window.promptWithDefault = async function() {
+      const result = document.getElementById('result2');
+      const name = await pjPrompt("Enter your name:", "John Doe");
+      
+      result.className = 'result show' + (name === null ? ' null' : '');
+      result.textContent = name === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${name}"`;
+    };
+
+    window.requiredPrompt = async function() {
+      const result = document.getElementById('result3');
+      const name = await pjPrompt(
+        "Enter your full name (required):",
+        "",
+        {
+          title: "Full Name Required",
+          required: true,
+          placeholder: "John Doe"
+        }
+      );
+      
+      result.className = 'result show' + (name === null ? ' null' : '');
+      result.textContent = name === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${name}"`;
+    };
+
+    window.emailPrompt = async function() {
+      const result = document.getElementById('result4');
+      const email = await pjPrompt(
+        "Enter your email address:",
+        "",
+        {
+          title: "Email Required",
+          inputType: "email",
+          placeholder: "user@example.com",
+          required: true,
+          pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+        }
+      );
+      
+      result.className = 'result show' + (email === null ? ' null' : '');
+      result.textContent = email === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${email}"`;
+    };
+
+    window.customValidatorPrompt = async function() {
+      const result = document.getElementById('result5');
+      const username = await pjPrompt(
+        "Choose a username:",
+        "",
+        {
+          title: "Create Username",
+          placeholder: "lowercase, 3-20 chars",
+          required: true,
+          validator: (value) => {
+            if (value.length < 3) return "Username must be at least 3 characters";
+            if (value.length > 20) return "Username must be less than 20 characters";
+            if (!/^[a-z0-9_]+$/.test(value)) return "Only lowercase letters, numbers, and underscore allowed";
+            if (value === "admin" || value === "root") return "This username is reserved";
+            return true;
+          }
+        }
+      );
+      
+      result.className = 'result show' + (username === null ? ' null' : '');
+      result.textContent = username === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${username}"`;
+    };
+
+    window.passwordPrompt = async function() {
+      const result = document.getElementById('result6');
+      const password = await pjPrompt(
+        "Enter a password:",
+        "",
+        {
+          title: "Set Password",
+          inputType: "password",
+          required: true,
+          maxLength: 50,
+          validator: (value) => {
+            if (value.length < 8) return "Password must be at least 8 characters";
+            if (!/[A-Z]/.test(value)) return "Password must contain an uppercase letter";
+            if (!/[a-z]/.test(value)) return "Password must contain a lowercase letter";
+            if (!/[0-9]/.test(value)) return "Password must contain a number";
+            return true;
+          }
+        }
+      );
+      
+      result.className = 'result show' + (password === null ? ' null' : '');
+      result.textContent = password === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${'•'.repeat(password.length)}" (length: ${password.length})`;
+    };
+
+    window.nativePrompt = function() {
+      const result = document.getElementById('result7');
+      const name = window.prompt("What's your name?", "Default");
+      
+      result.className = 'result show' + (name === null ? ' null' : '');
+      result.textContent = 'Native - ' + (name === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${name}"`);
+    };
+
+    window.promptjsPrompt = async function() {
+      const result = document.getElementById('result7');
+      const name = await pjPrompt("What's your name?", "Default");
+      
+      result.className = 'result show' + (name === null ? ' null' : '');
+      result.textContent = 'PromptJS - ' + (name === null 
+        ? 'Result: null (cancelled)' 
+        : `Result: "${name}"`);
+    };
+  </script>
+</body>
+</html>

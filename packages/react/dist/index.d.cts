@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactNode } from 'react';
 import * as _tlabsinc_promptjs_core from '@tlabsinc/promptjs-core';
-import { config, Modal, toast, alert, confirm, question, i18n, version } from '@tlabsinc/promptjs-core';
+import { config, Modal, toast, alert, confirm, question, prompt, i18n, version } from '@tlabsinc/promptjs-core';
 
 type PromptTheme = "auto" | "light" | "dark";
 /**
@@ -21,6 +21,7 @@ interface PromptContextValue {
     alert: typeof alert;
     confirm: typeof confirm;
     question: typeof question;
+    prompt: typeof prompt;
     i18n: typeof i18n;
     version: typeof version;
 }
@@ -37,6 +38,7 @@ declare function useDialogs(): {
     alert: typeof alert;
     confirm: typeof confirm;
     question: typeof question;
+    prompt: typeof prompt;
 };
 /**
  * Optional: open a modal from React with a stable callback,

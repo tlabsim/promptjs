@@ -71,3 +71,139 @@ export async function alert(message: string, opts?: { title?: string }): Promise
     });
   });
 }
+
+export async function prompt(
+  message: string,
+  defaultValue?: string,
+  opts?: Partial<import('./types').PromptOptions>
+): Promise<string | null> {
+  return new Promise((resolve) => {
+    let inputValue = defaultValue ?? '';
+    let errorEl: HTMLElement | null = null;
+
+    const validateInput = (value: string): string | null => {
+      if (opts?.required && !value.trim()) {
+        return 'This field is required';
+      }
+      if (opts?.pattern) {
+        const regex = new RegExp(opts.pattern);
+        if (!regex.test(value)) {
+          return 'Invalid format';
+        }
+      }
+      if (opts?.validator) {
+        const result = opts.validator(value);
+        if (result === false) return 'Invalid input';
+        if (typeof result === 'string') return result;
+      }
+      return null;
+    };
+
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'pj-prompt-wrapper';
+    
+    const messageP = document.createElement('p');
+    messageP.className = 'pj-prompt-message';
+    messageP.textContent = message;
+    contentWrapper.appendChild(messageP);
+
+    const inputEl = document.createElement('input');
+    inputEl.type = opts?.inputType ?? 'text';
+    inputEl.className = 'pj-prompt-input';
+    inputEl.value = inputValue;
+    inputEl.setAttribute('autocomplete', 'off');
+    inputEl.setAttribute('spellcheck', 'false');
+    if (opts?.placeholder) inputEl.placeholder = opts.placeholder;
+    if (opts?.maxLength) inputEl.maxLength = opts.maxLength;
+    contentWrapper.appendChild(inputEl);
+
+    errorEl = document.createElement('div');
+    errorEl.className = 'pj-prompt-error';
+    errorEl.setAttribute('role', 'alert');
+    errorEl.setAttribute('aria-live', 'polite');
+    contentWrapper.appendChild(errorEl);
+
+    inputEl.addEventListener('input', (e) => {
+      inputValue = (e.target as HTMLInputElement).value;
+      if (errorEl) errorEl.textContent = '';
+      inputEl.classList.remove('error');
+    });
+
+    inputEl.addEventListener('focus', () => {
+      // Focus styles handled by CSS
+    });
+
+    inputEl.addEventListener('blur', () => {
+      // Blur styles handled by CSS
+    });
+
+    // Allow Enter to submit (if valid)
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const error = validateInput(inputValue);
+        if (error) {
+          if (errorEl) {
+            errorEl.textContent = error;
+            inputEl.classList.add('error');
+          }
+          return;
+        }
+        // Validation passed, resolve and close
+        resolve(inputValue);
+        modal.close('ok');
+      }
+    });
+
+    const modal = open({
+      title: opts?.title,
+      content: contentWrapper,
+      kind: opts?.kind,
+      buttons: [
+        { 
+          id: 'cancel', 
+          text: opts?.cancelText ?? config.get().i18n.cancel, 
+          variant: 'neutral',
+          closeOnClick: true,
+          onClick: () => resolve(null)
+        },
+        { 
+          id: 'ok', 
+          text: opts?.okText ?? config.get().i18n.ok, 
+          variant: 'primary',
+          closeOnClick: false, // Don't auto-close, we'll handle it manually
+          onClick: () => {
+            const error = validateInput(inputValue);
+            if (error) {
+              if (errorEl) {
+                errorEl.textContent = error;
+                inputEl.classList.add('error');
+              }
+              // Don't close modal, just return
+              return;
+            }
+            // Validation passed, resolve and close
+            resolve(inputValue);
+            modal.close('ok');
+          }
+        }
+      ],
+      closeOnEsc: true,
+      closeOnBackdrop: false, // Don't lose input on accidental backdrop click
+      onClose: (result) => {
+        if (result === 'esc' || result === 'backdrop') {
+          resolve(null);
+        }
+      },
+      onOpen: () => {
+        // Auto-focus the input after modal opens
+        setTimeout(() => {
+          inputEl.focus();
+          if (defaultValue) {
+            inputEl.select(); // Select default value if any
+          }
+        }, 100);
+      }
+    });
+  });
+}

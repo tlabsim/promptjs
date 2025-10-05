@@ -179,6 +179,141 @@
 @keyframes pj-timeout-progress-y { from { transform: scaleY(0) } to { transform: scaleY(1) } }
 
 
+/* Prompt input styling - Modern and consistent with modal design */
+.pj-prompt-wrapper {
+  padding: 1rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pj-spacing-2);
+}
+
+.pj-prompt-message {
+  margin: 0;
+  color: var(--pj-fg);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.pj-prompt-input {
+  width: 100%;
+  padding: 10px 14px;
+  margin-top: .5rem;
+  border: 1.5px solid var(--pj-border);
+  border-radius: var(--pj-radius-sm);
+  font-size: 14px;
+  font-family: var(--pj-font);
+  line-height: 1.5;
+  outline: none;
+  transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: var(--pj-muted);
+  color: var(--pj-fg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pj-prompt-input:hover {
+  border-color: color-mix(in srgb, var(--pj-border) 60%, var(--pj-fg));
+}
+
+.pj-prompt-input:focus {
+  border-color: var(--pj-primary);
+  box-shadow: var(--pj-ring);
+  background: var(--pj-bg);
+}
+
+.pj-prompt-input.error {
+  border-color: var(--pj-error);
+  background: color-mix(in srgb, var(--pj-error) 3%, var(--pj-bg));
+}
+
+.pj-prompt-input.error:focus {
+  border-color: var(--pj-error);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pj-error) 15%, transparent);
+}
+
+.pj-prompt-input::placeholder {
+  color: color-mix(in srgb, var(--pj-fg) 40%, transparent);
+  opacity: 1;
+}
+
+.pj-prompt-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--pj-muted);
+}
+
+.pj-prompt-error {
+  color: var(--pj-error);
+  font-size: 12px;
+  line-height: 1.4;
+  min-height: 17px;
+  margin: 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pj-prompt-error:not(:empty) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pj-prompt-error:empty {
+  display: none;
+}
+
+/* Input type-specific styling */
+.pj-prompt-input[type="password"] {
+  letter-spacing: 0.1em;
+  font-family: var(--pj-font-mono);
+}
+
+.pj-prompt-input[type="email"],
+.pj-prompt-input[type="url"] {
+  font-family: var(--pj-font-mono);
+}
+
+.pj-prompt-input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Enhanced focus states for better accessibility */
+.pj-prompt-input:focus-visible {
+  outline: none;
+  border-color: var(--pj-primary);
+  box-shadow: var(--pj-ring);
+}
+
+/* Modern autofill styling */
+.pj-prompt-input:-webkit-autofill,
+.pj-prompt-input:-webkit-autofill:hover,
+.pj-prompt-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--pj-fg);
+  -webkit-box-shadow: 0 0 0 1000px var(--pj-bg) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Success state (optional, for future use) */
+.pj-prompt-input.success {
+  border-color: var(--pj-success);
+  background: color-mix(in srgb, var(--pj-success) 3%, var(--pj-bg));
+}
+
+.pj-prompt-input.success:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pj-success) 15%, transparent);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .pj-prompt-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px 14px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* Disable animated entrances/exits */
   .pj-enter-fade,

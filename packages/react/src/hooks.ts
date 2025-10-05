@@ -1,5 +1,5 @@
 import * as React from "react";
-import { toast as coreToast, Modal, alert, confirm, question } from "@tlabsinc/promptjs-core";
+import { toast as coreToast, Modal, alert, confirm, question, prompt } from "@tlabsinc/promptjs-core";
 import type { PromptContextValue } from "./types";
 import { usePrompt } from "./provider";
 
@@ -19,7 +19,8 @@ export function useDialogs() {
     return {
       alert: ctx.alert,
       confirm: ctx.confirm,
-      question: ctx.question
+      question: ctx.question,
+      prompt: ctx.prompt
     };
   }, [ctx]);
 }

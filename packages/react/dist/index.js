@@ -7,6 +7,7 @@ import {
   alert,
   confirm,
   question,
+  prompt,
   i18n,
   version
 } from "@tlabsinc/promptjs-core";
@@ -37,7 +38,7 @@ var PromptProvider = ({
     return;
   }, [scope, zIndexBase]);
   const value = React.useMemo(
-    () => ({ config, Modal, toast, alert, confirm, question, i18n, version }),
+    () => ({ config, Modal, toast, alert, confirm, question, prompt, i18n, version }),
     []
   );
   return /* @__PURE__ */ jsx(Ctx.Provider, { value, children: /* @__PURE__ */ jsx("div", { ref: hostRef, style: scope ? { position: "relative" } : void 0, children }) });
@@ -45,7 +46,7 @@ var PromptProvider = ({
 function usePrompt() {
   const ctx = React.useContext(Ctx);
   if (!ctx) {
-    return { config, Modal, toast, alert, confirm, question, i18n, version };
+    return { config, Modal, toast, alert, confirm, question, prompt, i18n, version };
   }
   return ctx;
 }
@@ -64,7 +65,8 @@ function useDialogs() {
     return {
       alert: ctx.alert,
       confirm: ctx.confirm,
-      question: ctx.question
+      question: ctx.question,
+      prompt: ctx.prompt
     };
   }, [ctx]);
 }

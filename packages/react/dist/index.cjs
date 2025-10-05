@@ -68,7 +68,7 @@ var PromptProvider = ({
     return;
   }, [scope, zIndexBase]);
   const value = React.useMemo(
-    () => ({ config: import_promptjs_core.config, Modal: import_promptjs_core.Modal, toast: import_promptjs_core.toast, alert: import_promptjs_core.alert, confirm: import_promptjs_core.confirm, question: import_promptjs_core.question, i18n: import_promptjs_core.i18n, version: import_promptjs_core.version }),
+    () => ({ config: import_promptjs_core.config, Modal: import_promptjs_core.Modal, toast: import_promptjs_core.toast, alert: import_promptjs_core.alert, confirm: import_promptjs_core.confirm, question: import_promptjs_core.question, prompt: import_promptjs_core.prompt, i18n: import_promptjs_core.i18n, version: import_promptjs_core.version }),
     []
   );
   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ctx.Provider, { value, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref: hostRef, style: scope ? { position: "relative" } : void 0, children }) });
@@ -76,7 +76,7 @@ var PromptProvider = ({
 function usePrompt() {
   const ctx = React.useContext(Ctx);
   if (!ctx) {
-    return { config: import_promptjs_core.config, Modal: import_promptjs_core.Modal, toast: import_promptjs_core.toast, alert: import_promptjs_core.alert, confirm: import_promptjs_core.confirm, question: import_promptjs_core.question, i18n: import_promptjs_core.i18n, version: import_promptjs_core.version };
+    return { config: import_promptjs_core.config, Modal: import_promptjs_core.Modal, toast: import_promptjs_core.toast, alert: import_promptjs_core.alert, confirm: import_promptjs_core.confirm, question: import_promptjs_core.question, prompt: import_promptjs_core.prompt, i18n: import_promptjs_core.i18n, version: import_promptjs_core.version };
   }
   return ctx;
 }
@@ -95,7 +95,8 @@ function useDialogs() {
     return {
       alert: ctx.alert,
       confirm: ctx.confirm,
-      question: ctx.question
+      question: ctx.question,
+      prompt: ctx.prompt
     };
   }, [ctx]);
 }

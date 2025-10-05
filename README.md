@@ -42,7 +42,7 @@ npm i @tlabsinc/promptjs-react
 ## Quick start (Core)
 
 ```ts
-import { Modal, toast, alert, confirm, question, config } from "@tlabsinc/promptjs-core";
+import { Modal, toast, alert, confirm, prompt, question, config } from "@tlabsinc/promptjs-core";
 import "@tlabsinc/promptjs-core/dist/promptjs.css";
 
 config.update({ theme: "auto" });
@@ -54,6 +54,11 @@ Modal.open({
 });
 
 toast({ kind: "success", message: "<b>Saved</b> successfully." });
+
+// Drop-in replacements for native browser APIs
+await alert("Operation complete!");
+const confirmed = await confirm("Delete this item?");
+const name = await prompt("Enter your name:", "Guest");
 ```
 
 ---
@@ -73,13 +78,16 @@ function App() {
 }
 
 function Demo() {
-  const { Modal, toast, alert, confirm } = usePrompt();
+  const { Modal, toast, alert, confirm, prompt } = usePrompt();
   return (
     <button
       onClick={async () => {
-        Modal.open({ title: "Hi", content: "From React." });
-        await alert("Nice!");
-        toast({ kind: "success", message: "Done." });
+        const name = await prompt("What's your name?", "");
+        if (name) {
+          Modal.open({ title: `Hi ${name}!`, content: "From React." });
+          await alert("Nice to meet you!");
+          toast({ kind: "success", message: "Done." });
+        }
       }}
     >
       Try it
@@ -149,10 +157,31 @@ toast({
 
 ### Dialog helpers
 
+Drop-in replacements for native browser APIs with async/await:
+
 ```ts
+// Alert - simple notification
 await alert("Message", { title?: string });
+
+// Confirm - returns boolean
 const ok = await confirm("Are you sure?", { includeCancel: true });
-const { id } = await question({ message: "Pick one", buttons: [{ id: "yes", text: "Yes" }, { id: "no", text: "No" }] });
+
+// Prompt - returns string | null (NEW!)
+const name = await prompt("What's your name?", "Default", {
+  title?: string,
+  inputType?: "text" | "password" | "email" | "number" | "tel" | "url",
+  placeholder?: string,
+  required?: boolean,
+  maxLength?: number,
+  pattern?: string,
+  validator?: (value: string) => boolean | string
+});
+
+// Question - returns selected button id
+const { id } = await question({ 
+  message: "Pick one", 
+  buttons: [{ id: "yes", text: "Yes" }, { id: "no", text: "No" }] 
+});
 ```
 
 ---

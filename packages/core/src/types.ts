@@ -124,6 +124,19 @@ export interface ConfirmOptions {
   cancelText?: string;         // falls back to i18n.cancel
 }
 
+export interface PromptOptions {
+  title?: string;
+  kind?: NotifyKind;
+  okText?: string;             // falls back to i18n.ok
+  cancelText?: string;         // falls back to i18n.cancel
+  placeholder?: string;        // input placeholder
+  inputType?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';  // default 'text'
+  required?: boolean;          // default false
+  maxLength?: number;          // optional max length
+  pattern?: string;            // regex pattern for validation
+  validator?: (value: string) => boolean | string;  // custom validator, returns true or error message
+}
+
 export interface QuestionButton { id: string; text: string; variant?: ButtonVariant; }
 
 export interface QuestionOptions {

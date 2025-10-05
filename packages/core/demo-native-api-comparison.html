@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PromptJS - Native API Replacements Demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      margin: 0 0 10px 0;
+      color: #111827;
+      font-size: 32px;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin: 0 0 32px 0;
+      font-size: 16px;
+    }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .panel {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 24px;
+      background: #f9fafb;
+    }
+    .panel.native {
+      border-color: #fbbf24;
+      background: #fffbeb;
+    }
+    .panel.promptjs {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+    .panel h2 {
+      margin: 0 0 16px 0;
+      font-size: 20px;
+      color: #111827;
+    }
+    .panel.native h2::before {
+      content: "🌐 ";
+    }
+    .panel.promptjs h2::before {
+      content: "✨ ";
+    }
+    button {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 10px;
+    }
+    .native button {
+      background: #fbbf24;
+      color: #78350f;
+    }
+    .native button:hover {
+      background: #f59e0b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+    }
+    .promptjs button {
+      background: #3b82f6;
+      color: white;
+    }
+    .promptjs button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .result {
+      margin-top: 16px;
+      padding: 12px;
+      background: white;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      border-left: 3px solid #10b981;
+      min-height: 60px;
+      display: none;
+    }
+    .result.show {
+      display: block;
+    }
+    .result.null {
+      border-left-color: #ef4444;
+    }
+    .features {
+      margin-top: 32px;
+      padding: 24px;
+      background: #f3f4f6;
+      border-radius: 8px;
+    }
+    .features h3 {
+      margin: 0 0 16px 0;
+      color: #111827;
+    }
+    .features ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .features li {
+      margin-bottom: 8px;
+      color: #4b5563;
+    }
+    .scenario {
+      margin-top: 32px;
+      padding: 24px;
+      background: #ecfdf5;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+    }
+    .scenario h3 {
+      margin: 0 0 16px 0;
+      color: #065f46;
+    }
+    .scenario button {
+      background: #10b981;
+      color: white;
+      width: auto;
+      padding: 12px 24px;
+    }
+    .scenario button:hover {
+      background: #059669;
+    }
+    code {
+      background: #e5e7eb;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+    }
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PromptJS Native API Replacements</h1>
+    <p class="subtitle">Compare native browser dialogs with PromptJS alternatives</p>
+
+    <!-- Alert Comparison -->
+    <div class="comparison">
+      <div class="panel native">
+        <h2>Native alert()</h2>
+        <button onclick="nativeAlert()">Try Native Alert</button>
+        <p style="font-size: 13px; color: #92400e; margin: 12px 0 0 0;">
+          ❌ Blocks entire UI<br>
+          ❌ Can't be styled<br>
+          ❌ Ugly appearance
+        </p>
+      </div>
+      <div class="panel promptjs">
+        <h2>PromptJS alert()</h2>
+        <button onclick="promptjsAlert()">Try PromptJS Alert</button>
+        <p style="font-size: 13px; color: #1e40af; margin: 12px 0 0 0;">
+          ✅ Non-blocking (async)<br>
+          ✅ Beautiful design<br>
+          ✅ Smooth animations
+        </p>
+      </div>
+    </div>
+
+    <!-- Confirm Comparison -->
+    <div class="comparison">
+      <div class="panel native">
+        <h2>Native confirm()</h2>
+        <button onclick="nativeConfirm()">Try Native Confirm</button>
+        <div id="result-native-confirm" class="result"></div>
+      </div>
+      <div class="panel promptjs">
+        <h2>PromptJS confirm()</h2>
+        <button onclick="promptjsConfirm()">Try PromptJS Confirm</button>
+        <div id="result-promptjs-confirm" class="result"></div>
+      </div>
+    </div>
+
+    <!-- Prompt Comparison -->
+    <div class="comparison">
+      <div class="panel native">
+        <h2>Native prompt()</h2>
+        <button onclick="nativePrompt()">Try Native Prompt</button>
+        <div id="result-native-prompt" class="result"></div>
+        <p style="font-size: 13px; color: #92400e; margin: 12px 0 0 0;">
+          ❌ No validation<br>
+          ❌ Text input only<br>
+          ❌ No customization
+        </p>
+      </div>
+      <div class="panel promptjs">
+        <h2>PromptJS prompt()</h2>
+        <button onclick="promptjsPrompt()">Try PromptJS Prompt</button>
+        <div id="result-promptjs-prompt" class="result"></div>
+        <p style="font-size: 13px; color: #1e40af; margin: 12px 0 0 0;">
+          ✅ Built-in validation<br>
+          ✅ Multiple input types<br>
+          ✅ Fully customizable
+        </p>
+      </div>
+    </div>
+
+    <!-- Real-World Scenario -->
+    <div class="scenario">
+      <h3>🎯 Real-World Scenario: User Registration Flow</h3>
+      <p style="margin: 0 0 16px 0; color: #065f46;">
+        This demonstrates a complete user registration flow using PromptJS with validation.
+      </p>
+      <button onclick="registrationFlow()">Start Registration Flow</button>
+      <div id="result-flow" class="result"></div>
+    </div>
+
+    <!-- Features -->
+    <div class="features">
+      <h3>✨ PromptJS Advantages</h3>
+      <ul>
+        <li><strong>Non-blocking:</strong> Uses async/await, doesn't freeze the browser</li>
+        <li><strong>Beautiful:</strong> Consistent, modern design across all browsers</li>
+        <li><strong>Powerful:</strong> Input validation, multiple types, custom validators</li>
+        <li><strong>Accessible:</strong> Full keyboard navigation, screen reader support</li>
+        <li><strong>Testable:</strong> Easy to mock in unit tests</li>
+        <li><strong>Customizable:</strong> Themes, animations, and styling options</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Load PromptJS from CDN (for demo purposes) -->
+  <link rel="stylesheet" href="../styles/promptjs.css">
+  script src="./dist/index.global.js"></script>
+
+  <script type="module">
+    if (!window.PromptJS) {
+        alert(
+          "PromptJS global not found. Check that dist/index.global.js was built and the path is correct."
+        );
+      }
+    
+    const {
+        toast,
+        Modal,
+        config,
+        i18n,
+        prompt: pjPrompt,
+        alert: pjAlert,
+        confirm: pjConfirm,
+        question: pjQuestion,
+      } = window.PromptJS || {};
+
+    config.update({ theme: 'light' });
+
+    // Make functions available globally for demo
+    window.PJ = { alert, confirm, prompt };
+
+    // Native alert
+    window.nativeAlert = function() {
+      window.alert("This is a native browser alert.\n\nNotice how it blocks the entire page?");
+    };
+
+    // PromptJS alert
+    window.promptjsAlert = async function() {
+      await PJ.alert("This is a PromptJS alert.\n\nNotice the smooth animation and modern design!");
+    };
+
+    // Native confirm
+    window.nativeConfirm = function() {
+      const result = window.confirm("Do you want to continue?");
+      const el = document.getElementById('result-native-confirm');
+      el.className = 'result show' + (result ? '' : ' null');
+      el.textContent = `Result: ${result}\n\n${result ? '✅ User clicked OK' : '❌ User clicked Cancel'}`;
+    };
+
+    // PromptJS confirm
+    window.promptjsConfirm = async function() {
+      const result = await PJ.confirm("Do you want to continue?");
+      const el = document.getElementById('result-promptjs-confirm');
+      el.className = 'result show' + (result ? '' : ' null');
+      el.textContent = `Result: ${result}\n\n${result ? '✅ User clicked Yes' : '❌ User clicked No'}`;
+    };
+
+    // Native prompt
+    window.nativePrompt = function() {
+      const result = window.prompt("What's your name?", "Guest");
+      const el = document.getElementById('result-native-prompt');
+      el.className = 'result show' + (result === null ? ' null' : '');
+      el.textContent = result === null 
+        ? 'Result: null\n\n❌ User cancelled'
+        : `Result: "${result}"\n\n✅ User entered: ${result}`;
+    };
+
+    // PromptJS prompt
+    window.promptjsPrompt = async function() {
+      const result = await PJ.prompt(
+        "Enter your email address:",
+        "",
+        {
+          title: "Email Required",
+          inputType: "email",
+          placeholder: "user@example.com",
+          required: true,
+          pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+        }
+      );
+      const el = document.getElementById('result-promptjs-prompt');
+      el.className = 'result show' + (result === null ? ' null' : '');
+      el.textContent = result === null 
+        ? 'Result: null\n\n❌ User cancelled'
+        : `Result: "${result}"\n\n✅ Valid email entered!`;
+    };
+
+    // Registration flow
+    window.registrationFlow = async function() {
+      const resultEl = document.getElementById('result-flow');
+      resultEl.className = 'result show';
+      resultEl.textContent = 'Starting registration...';
+
+      try {
+        // Step 1: Get username
+        const username = await PJ.prompt(
+          "Choose a username:",
+          "",
+          {
+            title: "Step 1/3: Username",
+            required: true,
+            placeholder: "lowercase, 3-20 chars",
+            validator: (value) => {
+              if (value.length < 3) return "Must be at least 3 characters";
+              if (value.length > 20) return "Must be less than 20 characters";
+              if (!/^[a-z0-9_]+$/.test(value)) return "Only lowercase, numbers, underscore";
+              return true;
+            }
+          }
+        );
+        if (!username) {
+          resultEl.textContent = '❌ Registration cancelled by user';
+          return;
+        }
+
+        // Step 2: Get email
+        const email = await PJ.prompt(
+          "Enter your email:",
+          "",
+          {
+            title: "Step 2/3: Email",
+            inputType: "email",
+            required: true,
+            placeholder: "user@example.com",
+            pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
+          }
+        );
+        if (!email) {
+          resultEl.textContent = '❌ Registration cancelled by user';
+          return;
+        }
+
+        // Step 3: Get password
+        const password = await PJ.prompt(
+          "Create a password:",
+          "",
+          {
+            title: "Step 3/3: Password",
+            inputType: "password",
+            required: true,
+            validator: (value) => {
+              if (value.length < 8) return "Must be at least 8 characters";
+              if (!/[A-Z]/.test(value)) return "Must contain uppercase letter";
+              if (!/[a-z]/.test(value)) return "Must contain lowercase letter";
+              if (!/[0-9]/.test(value)) return "Must contain number";
+              return true;
+            }
+          }
+        );
+        if (!password) {
+          resultEl.textContent = '❌ Registration cancelled by user';
+          return;
+        }
+
+        // Confirm registration
+        const confirmed = await PJ.confirm(
+          `Register with:\n• Username: ${username}\n• Email: ${email}\n\nProceed with registration?`
+        );
+        
+        if (confirmed) {
+          resultEl.textContent = `✅ Registration complete!\n\nUsername: ${username}\nEmail: ${email}\nPassword: ${'•'.repeat(password.length)}`;
+          
+          // Show success alert
+          await PJ.alert("Welcome! Your account has been created successfully.");
+        } else {
+          resultEl.textContent = '❌ Registration cancelled by user';
+        }
+      } catch (err) {
+        resultEl.className = 'result show null';
+        resultEl.textContent = '❌ Error: ' + err.message;
+      }
+    };
+  </script>
+</body>
+</html>
