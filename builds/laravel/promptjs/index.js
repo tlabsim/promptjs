@@ -10,7 +10,7 @@ import {
   prompt,
   i18n,
   version
-} from "prompt.js";
+} from "@tlabsinc/promptjs-core";
 import { jsx } from "react/jsx-runtime";
 var hasWindow = () => typeof window !== "undefined";
 var Ctx = React.createContext(null);
