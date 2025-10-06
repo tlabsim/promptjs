@@ -876,6 +876,133 @@ const result: string | null = await prompt("Name?", "", {
 
 ---
 
+## ⚛️ React Integration
+
+PromptJS has official React bindings with hooks and context support!
+
+### Installation
+
+```bash
+npm install @tlabsinc/promptjs-react @tlabsinc/promptjs-core
+```
+
+### Basic Usage (No Provider Needed)
+
+```tsx
+import { useDialogs } from '@tlabsinc/promptjs-react';
+import '@tlabsinc/promptjs-core/dist/promptjs.css';
+
+function MyComponent() {
+  const { alert, confirm, prompt } = useDialogs();
+  
+  const handleClick = async () => {
+    await alert("Hello from React!");
+    
+    const ok = await confirm("Delete this item?");
+    if (ok) {
+      const reason = await prompt("Why?");
+      console.log(reason);
+    }
+  };
+  
+  return <button onClick={handleClick}>Show Dialogs</button>;
+}
+```
+
+### With Provider (Recommended)
+
+```tsx
+import { PromptProvider, useDialogs, useToast } from '@tlabsinc/promptjs-react';
+import '@tlabsinc/promptjs-core/dist/promptjs.css';
+
+function App() {
+  return (
+    <PromptProvider theme="auto">
+      <YourApp />
+    </PromptProvider>
+  );
+}
+
+function YourApp() {
+  const { alert, confirm, prompt } = useDialogs();
+  const toast = useToast();
+  
+  const handleSave = async () => {
+    const name = await prompt("Enter your name:");
+    if (name) {
+      toast({ kind: 'success', message: `Saved ${name}!` });
+    }
+  };
+  
+  return <button onClick={handleSave}>Save</button>;
+}
+```
+
+### React Hooks
+
+#### `useDialogs()`
+```tsx
+const { alert, confirm, question, prompt } = useDialogs();
+```
+
+#### `useToast()`
+```tsx
+const toast = useToast();
+toast({ message: "Saved!", kind: 'success' });
+```
+
+#### `useModal()`
+```tsx
+const openModal = useModal();
+const inst = openModal({ title: "Hello", content: "World" });
+```
+
+#### `usePrompt()`
+```tsx
+const { config, Modal, i18n, version } = usePrompt();
+```
+
+### React Example: Registration Form
+
+```tsx
+import { useDialogs, useToast } from '@tlabsinc/promptjs-react';
+
+function RegistrationButton() {
+  const { prompt, confirm } = useDialogs();
+  const toast = useToast();
+  
+  const handleRegister = async () => {
+    const username = await prompt(
+      "Choose a username:",
+      "",
+      {
+        required: true,
+        validator: (v) => v.length >= 3 ? true : "Too short"
+      }
+    );
+    if (!username) return;
+    
+    const email = await prompt("Your email:", "", { 
+      inputType: 'email',
+      required: true 
+    });
+    if (!email) return;
+    
+    const ok = await confirm(`Register as ${username}?`);
+    if (ok) {
+      // Register logic
+      toast({ kind: 'success', message: 'Account created!' });
+    }
+  };
+  
+  return <button onClick={handleRegister}>Register</button>;
+}
+```
+
+**📖 Full React Documentation**: [React Package README](./packages/react/README.md)
+
+---
+
 ## 📚 API Reference
 
 ### `alert(message, options?)`

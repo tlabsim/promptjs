@@ -38,11 +38,11 @@
 .pj-modal-translucent { backdrop-filter: saturate(1.2) blur(var(--pj-modal-blur, 0)); border: 1px solid color-mix(in oklab, rgb(var(--pj-modal-surface-rgb)) 70%, transparent);}
 .pj-modal   { will-change: opacity, transform; }
 
-.pj-modal-header { position: relative; display:flex; padding: 0 2rem; padding-right: 4rem; border-bottom:0px solid var(--pj-border); }
+.pj-modal-header { position: relative; display:flex; min-height: 1.54rem; padding: 0 2rem; padding-right: 4rem; border-bottom:0px solid var(--pj-border); }
 .pj-modal-close {  position: absolute;  top: 8px;  right: 8px;  width: 28px;  height: 28px; padding:6px; border-radius: 8px; display: inline-flex;align-items: center; justify-content: center; border: 1px solid var(--pj-border);  background: var(--pj-muted); color: inherit; cursor: pointer; }
 .pj-modal-close:hover { background: var(--pj-muted-hover); }
 .pj-modal-footer{ position: relative; padding: 1rem 2rem; border-top:0px solid var(--pj-border); border-bottom:none; display:flex; gap:8px; justify-content:flex-end; font-size: .9rem;}
-.pj-modal .pj-modal-content{ padding:1rem 2rem; max-height:70vh; overflow:auto; } 
+.pj-modal .pj-modal-content{ padding:1rem 2rem 1.5rem 2rem; max-height:70vh; overflow:auto; } 
 .pj-modal-btn{ padding:.5rem 1.5rem; border-radius:.5rem; border:1px solid var(--pj-border); background: var(--pj-muted); color: inherit; cursor: pointer; font-size: inherit;}
 .pj-modal-btn:hover { background: var(--pj-muted-hover); }
 .pj-modal-btn.primary{ background:var(--pj-primary); color:#fff; border-color:transparent; }
