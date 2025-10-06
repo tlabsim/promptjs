@@ -277,3 +277,9 @@ export function bare(options: BareModalOptions = {}): ModalInstance {
     },
   });
 }
+
+/**
+ * Alias for bare() - mounts custom content in a minimal modal wrapper.
+ * Provides a more semantic name for mounting DOM elements.
+ */
+export const mount = bare;

@@ -1,7 +1,74 @@
-# PromptJS - Quick Start Guide
+﻿# PromptJS - Quick Start Guide
 
-> **Modern, accessible, and themeable dialogs for the web**  
+> **Modern, accessible, and powerful dialogs for the web**  
 > Drop-in replacement for `alert()`, `confirm()`, and `prompt()` with a beautiful UI
+
+---
+
+## Table of Contents
+
+- [What is PromptJS?](#-what-is-promptjs) - Core features & capabilities
+- [Installation](#-installation) - CDN, Download, NPM
+- [Basic Usage](#-basic-usage) - Alert, Confirm, Prompt
+- [Enhanced Features](#-enhanced-features) - Types, Validation, Custom Text
+- [Quick Examples](#-quick-examples) - Delete, Registration
+- [Configuration](#%EF%B8%8F-configuration) - Complete config options
+- [Theming](#-theming) - Light, Dark, Auto, Custom colors
+- [Advanced Usage](#-advanced-usage) - Modal.open(), Modal.bare()/mount(), Toasts
+- [Common Patterns](#-common-patterns) - Recipes & snippets
+- [Internatilization](#-internationalization) - Multi-language support
+- [TypeScript](#-typescript-support) - Type definitions
+- [React Integration](#%EF%B8%8F-react-integration) - React hooks
+- [API Reference](#-api-quick-reference) - Function signatures
+- [Migration](#-migration-from-native-apis) - From native APIs
+- [Troubleshooting](#-troubleshooting) - Common issues
+
+---
+
+## What is PromptJS?
+
+**Two-in-one UI library**: Modals + Toasts in a single, zero-dependency package (~7KB gzipped)
+
+### Core Features
+
+#### 1 **Modals (Dialogs)**
+- **Low-level APIs**: 
+  - `Modal.open(options)` → Returns `ModalInstance` with full control
+  - `Modal.bare(element)` / `Modal.mount(element)` → Mount any DOM element as modal
+- **High-level Wrappers**: 
+  - `alert(message)` → Simple notification
+  - `confirm(message)` → Yes/No dialog
+  - `prompt(message)` → Input dialog with validation
+  - `question(message)` → Custom button choices
+
+**ModalInstance** provides:
+```javascript
+const inst = Modal.open({ title: "Hello", content: "..." });
+inst.update({ title: "Updated!" });  // Update content dynamically
+inst.close();                         // Close programmatically
+```
+
+#### 2 **Toast Notifications**
+- Multiple positions (top/bottom, left/center/right)
+- Behaviors: stack, queue, or replace
+- Auto-dismiss or sticky
+- Action buttons
+- Progress indicators
+
+#### 3 **Customization**
+- **Global Config**: `config.update({ theme: 'dark', animation: {...} })`
+- **Per-Instance**: Pass options directly when calling modals/toasts
+- **CSS Theming**: Override CSS variables for colors, spacing, fonts
+- **Built-in Themes**: Light, dark, or auto (follows system)
+
+#### 4 **Developer Experience**
+- **Zero Dependencies**: Pure TypeScript, no external libs
+- **Async/Await**: Non-blocking, promise-based APIs
+- **Validation**: Built-in input validation (required, pattern, custom)
+- **Accessibility**: Focus trap, ARIA labels, keyboard navigation
+- **i18n Ready**: Multi-language support with RTL
+- **Responsive**: Mobile-friendly with breakpoints
+- **React Bindings**: Optional `@tlabsinc/promptjs-react` package
 
 ---
 
@@ -38,7 +105,7 @@ import '@tlabsinc/promptjs-core/dist/promptjs.css';
 
 ---
 
-## 🚀 Basic Usage
+##  Basic Usage
 
 ### Simple Alert
 
@@ -87,7 +154,7 @@ const name = await PromptJS.prompt("What's your name?", "Guest");
 
 ---
 
-## 🎨 Enhanced Features
+##  Enhanced Features
 
 ### Alert with Types
 
@@ -167,691 +234,536 @@ const password = await PromptJS.prompt(
 
 ---
 
-## 🎯 Real-World Examples
+##  Quick Examples
 
-### Example 1: Delete Confirmation
-
+### Delete Confirmation
 ```javascript
 async function deleteItem(id) {
-  const confirmed = await PromptJS.confirm(
-    "Are you sure you want to delete this item?",
-    {
-      title: "Confirm Deletion",
-      kind: "warning",
-      okText: "Delete",
-      cancelText: "Cancel"
-    }
-  );
+  const ok = await PromptJS.confirm("Delete this item?", {
+    title: "Confirm Deletion",
+    kind: "warning",
+    okText: "Delete"
+  });
   
-  if (confirmed) {
-    // Perform deletion
+  if (ok) {
     await fetch(`/api/items/${id}`, { method: 'DELETE' });
-    
-    // Show success
-    await PromptJS.alert("Item deleted successfully", { kind: 'success' });
+    PromptJS.toast({ kind: 'success', message: 'Deleted!' });
   }
 }
 ```
 
-### Example 2: User Registration Flow
-
+### Multi-Step Registration
 ```javascript
 async function registerUser() {
-  // Step 1: Username
-  const username = await PromptJS.prompt(
-    "Choose a username:",
-    "",
-    {
-      title: "Step 1/3: Username",
-      required: true,
-      pattern: "^[a-zA-Z0-9_]{3,20}$",
-      validator: (value) => {
-        if (value.length < 3) return "Must be at least 3 characters";
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return "Only letters, numbers, and underscore";
-        return true;
-      }
-    }
-  );
-  if (!username) return; // User cancelled
+  const username = await PromptJS.prompt("Username:", "", {
+    required: true,
+    validator: (v) => v.length >= 3 ? true : "Too short"
+  });
+  if (!username) return;
   
-  // Step 2: Email
-  const email = await PromptJS.prompt(
-    "Enter your email:",
-    "",
-    {
-      title: "Step 2/3: Email",
-      inputType: "email",
-      required: true
-    }
-  );
+  const email = await PromptJS.prompt("Email:", "", {
+    inputType: "email",
+    required: true
+  });
   if (!email) return;
   
-  // Step 3: Password
-  const password = await PromptJS.prompt(
-    "Create a password:",
-    "",
-    {
-      title: "Step 3/3: Password",
-      inputType: "password",
-      required: true,
-      validator: (value) => {
-        if (value.length < 8) return "Must be at least 8 characters";
-        if (!/[A-Z]/.test(value)) return "Must contain uppercase letter";
-        if (!/[0-9]/.test(value)) return "Must contain number";
-        return true;
-      }
+  const password = await PromptJS.prompt("Password:", "", {
+    inputType: "password",
+    required: true,
+    validator: (v) => {
+      if (v.length < 8) return "Min 8 characters";
+      if (!/[A-Z]/.test(v)) return "Need uppercase";
+      if (!/[0-9]/.test(v)) return "Need number";
+      return true;
     }
-  );
+  });
   if (!password) return;
   
-  // Confirm
-  const confirmed = await PromptJS.confirm(
-    `Register with:\n• Username: ${username}\n• Email: ${email}\n\nProceed?`
-  );
-  
-  if (confirmed) {
-    // Register user
+  const ok = await PromptJS.confirm(`Register as ${username}?`);
+  if (ok) {
     await fetch('/api/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
     });
-    
-    await PromptJS.alert("Welcome! Account created successfully.", { kind: 'success' });
-  }
-}
-```
-
-### Example 3: Form with Validation
-
-```javascript
-async function collectUserInfo() {
-  try {
-    const name = await PromptJS.prompt("What's your name?", "", {
-      required: true,
-      minLength: 2
-    });
-    
-    const age = await PromptJS.prompt("What's your age?", "", {
-      inputType: "number",
-      validator: (val) => parseInt(val) >= 0 ? true : "Invalid age"
-    });
-    
-    const email = await PromptJS.prompt("Your email?", "", {
-      inputType: "email",
-      required: true
-    });
-    
-    // All inputs collected successfully
-    console.log({ name, age, email });
-    
-  } catch (error) {
-    // User cancelled at some step
-    await PromptJS.alert("Registration cancelled", { kind: 'info' });
+    PromptJS.toast({ kind: 'success', message: 'Account created!' });
   }
 }
 ```
 
 ---
 
-## ⚙️ Configuration
+##  Configuration
 
-### Global Configuration
+### Complete Configuration Options
 
-Configure PromptJS once for your entire application:
+PromptJS provides extensive configuration options. Configure once at app initialization:
 
 ```javascript
-// After loading PromptJS
 PromptJS.config.update({
-  // Theme: 'light', 'dark', or 'auto' (follows system)
-  theme: 'auto',
+  // ============================================
+  // THEME & APPEARANCE
+  // ============================================
+  theme: 'auto', // 'light' | 'dark' | 'auto' (follows system preference)
+  zIndexBase: 2000, // Base z-index for all dialogs and toasts
   
-  // Animation settings
+  // ============================================
+  // ANIMATION
+  // ============================================
   animation: {
-    enable: true,
-    durationMs: 200,
-    easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)'
+    enable: true, // Master switch for all animations
+    durationMs: 200, // Default animation duration
+    easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' // CSS easing function
   },
   
-  // Internationalization
+  // ============================================
+  // OVERLAY (Modal backdrop)
+  // ============================================
+  overlay: {
+    fade: true, // Fade backdrop in/out
+    surfaceAlpha: 0.6, // Backdrop opacity (0-1)
+    backdropBlurPx: 0 // Blur effect on backdrop (in pixels)
+  },
+  
+  // ============================================
+  // MODAL BEHAVIOR
+  // ============================================
+  modal: {
+    concurrency: 'queue', // 'queue' | 'reject' - how to handle multiple modals
+    surfaceAlpha: 1, // Modal surface opacity (0-1)
+    dialogBlurPx: 0, // Blur effect on modal content (in pixels)
+    closeOnEsc: true, // Close on ESC key
+    closeOnBackdrop: true, // Close on backdrop click
+    trapFocus: true, // Trap focus inside modal
+    showClose: true, // Show X close button
+    draggable: false // Enable dragging (desktop only)
+  },
+  
+  // ============================================
+  // TOAST NOTIFICATIONS
+  // ============================================
+  toast: {
+    defaultPosition: 'top-right', // 'top-left' | 'top-center' | 'top-right' | 
+                                   // 'bottom-left' | 'bottom-center' | 'bottom-right'
+    behavior: 'stack', // 'stack' | 'queue' | 'replace'
+    maxVisible: 3, // Maximum visible toasts per position
+    defaultTimeoutMs: 4000, // Default auto-dismiss time (0 = never)
+    defaultDismissible: true, // Show close button by default
+    spacingPx: 10, // Space between toasts
+    zBoost: 100, // Z-index boost above modals
+    margins: {
+      top: 16,
+      bottom: 16,
+      left: 16,
+      right: 16
+    },
+    animations: {
+      enter: {
+        preset: 'slide', // 'slide' | 'fade' | 'scale'
+        direction: 'auto', // 'auto' | 'left' | 'right' | 'up' | 'down'
+        durationMs: 200
+      },
+      exit: {
+        preset: 'slide',
+        direction: 'auto',
+        durationMs: 150
+      },
+      timeoutCue: {
+        show: true, // Show progress indicator
+        position: 'bottom', // 'top' | 'bottom' | 'left' | 'right' | 'cover'
+        direction: 'shrink', // 'grow' | 'shrink'
+        thicknessPx: 3
+      }
+    }
+  },
+  
+  // ============================================
+  // INTERNATIONALIZATION (i18n)
+  // ============================================
   i18n: {
     locale: 'en',
+    dir: 'auto', // 'auto' | 'ltr' | 'rtl' (for right-to-left languages)
     ok: 'OK',
     cancel: 'Cancel',
     yes: 'Yes',
-    no: 'No'
+    no: 'No',
+    close: 'Close',
+    dismiss: 'Dismiss',
+    titles: {
+      info: 'Information',
+      success: 'Success',
+      warning: 'Warning',
+      error: 'Error',
+      question: 'Question'
+    }
   },
   
-  // Z-index for modals
-  zIndexBase: 2000
+  // ============================================
+  // ACCESSIBILITY
+  // ============================================
+  a11y: {
+    ariaModalLabel: 'Dialog' // Default ARIA label for modals
+  },
+  
+  // ============================================
+  // RESPONSIVE BREAKPOINTS
+  // ============================================
+  breakpoints: {
+    sm: 640,  // Small devices
+    md: 768,  // Medium devices
+    lg: 1024  // Large devices
+  },
+  
+  // ============================================
+  // CUSTOM CONTAINER
+  // ============================================
+  container: null // HTMLElement | null - Mount target (null = document.body)
 });
+```
+
+### Common Configuration Patterns
+
+#### Minimal Setup (Recommended)
+```javascript
+PromptJS.config.update({
+  theme: 'auto',
+  animation: { enable: true, durationMs: 200 },
+  toast: { defaultPosition: 'top-right' }
+});
+```
+
+#### Disable Animations
+```javascript
+PromptJS.config.update({
+  animation: { enable: false }
+});
+```
+
+#### Custom Toast Behavior
+```javascript
+PromptJS.config.update({
+  toast: {
+    behavior: 'replace', // Only show one toast at a time
+    defaultPosition: 'bottom-center',
+    defaultTimeoutMs: 3000
+  }
+});
+```
+
+#### Queue Modals (Sequential)
+```javascript
+PromptJS.config.update({
+  modal: { concurrency: 'queue' } // Show modals one after another
+});
+```
+
+#### Reject Concurrent Modals
+```javascript
+PromptJS.config.update({
+  modal: { concurrency: 'reject' } // Reject new modals while one is open
+});
+```
+
+#### Custom Theme Colors (CSS)
+```css
+:root {
+  --pj-primary: #3b82f6;
+  --pj-success: #10b981;
+  --pj-warning: #f59e0b;
+  --pj-error: #ef4444;
+  --pj-radius: 8px;
+}
+```
+
+### Reading Current Config
+
+```javascript
+// Get entire config
+const config = PromptJS.config.get();
+
+// Get specific value
+const theme = PromptJS.config.get().theme;
+const toastPosition = PromptJS.config.get().toast.defaultPosition;
+```
+
+### Config Change Listener
+
+```javascript
+// Listen for config changes
+const unsubscribe = PromptJS.config.onChange((newConfig) => {
+  console.log('Config updated:', newConfig);
+});
+
+// Stop listening
+unsubscribe();
 ```
 
 ### Laravel Integration
 
-**Method 1: Blade Component** (Recommended)
-
-Create `resources/views/components/promptjs.blade.php`:
-
+**Blade Component** (`resources/views/components/promptjs.blade.php`):
 ```blade
 @once
 <link rel="stylesheet" href="{{ asset('css/promptjs.css') }}">
 <script src="{{ asset('js/prompt.js') }}"></script>
 <script>
-  if (window.PromptJS) {
-    PromptJS.config.update({
-      theme: 'auto',
-      i18n: {
-        locale: '{{ app()->getLocale() }}',
-        ok: '{{ __('OK') }}',
-        cancel: '{{ __('Cancel') }}'
-      }
-    });
-    window.PJ = PromptJS; // Shorthand
-  }
+  PromptJS.config.update({
+    i18n: { locale: '{{ app()->getLocale() }}' }
+  });
+  window.PJ = PromptJS;
 </script>
 @endonce
 ```
 
-Use in any view:
-
+**Usage**:
 ```blade
-@extends('layouts.app')
-
-@section('content')
-  <x-promptjs />
-  
-  <button onclick="handleClick()">Click Me</button>
-  
-  <script>
-    async function handleClick() {
-      await PJ.alert("Hello from Laravel!");
-    }
-  </script>
-@endsection
+<x-promptjs />
+<button onclick="PJ.alert('Hello!')">Click</button>
 ```
 
-**Method 2: Layout Template**
-
-Add to `resources/views/layouts/app.blade.php`:
-
+**Or in Layout** (`layouts/app.blade.php`):
 ```blade
-<!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="{{ asset('css/promptjs.css') }}">
-  <script src="{{ asset('js/prompt.js') }}"></script>
-  <script>
-    window.PJ = window.PromptJS; // Shorthand
-    PJ.config.update({
-      theme: 'auto',
-      i18n: { locale: '{{ app()->getLocale() }}' }
-    });
-  </script>
-</head>
-<body>
-  @yield('content')
-</body>
-</html>
+<script src="{{ asset('js/prompt.js') }}"></script>
+<script>window.PJ = PromptJS;</script>
 ```
 
 ---
 
-## 🎨 Theming
-
-### Automatic Theme Detection
+##  Theming
 
 ```javascript
-// Follows system preference (light/dark)
+// Auto (follows system)
 PromptJS.config.update({ theme: 'auto' });
+
+// Manual
+PromptJS.config.update({ theme: 'light' }); // or 'dark'
 ```
 
-### Manual Theme
-
-```javascript
-// Force light theme
-PromptJS.config.update({ theme: 'light' });
-
-// Force dark theme
-PromptJS.config.update({ theme: 'dark' });
-```
-
-### Custom CSS Variables
-
-Override CSS variables in your stylesheet:
-
+**Custom Colors** (CSS):
 ```css
 :root {
-  --pj-primary: #3b82f6;      /* Primary color */
-  --pj-success: #10b981;      /* Success color */
-  --pj-warning: #f59e0b;      /* Warning color */
-  --pj-error: #ef4444;        /* Error color */
-  --pj-radius: 8px;           /* Border radius */
-  --pj-font-family: 'Inter', sans-serif; /* Font */
+  --pj-primary: #3b82f6;
+  --pj-success: #10b981;
+  --pj-warning: #f59e0b;
+  --pj-error: #ef4444;
 }
 ```
 
 ---
 
-## 📱 Advanced Usage
+##  Advanced Usage
 
-### Toast Notifications
+### Modal APIs
 
+#### **Modal.open()** - Full-featured dialog
 ```javascript
-// Simple toast
-PromptJS.toast({ message: "Saved!" });
-
-// With type
-PromptJS.toast({ 
-  message: "Operation successful!", 
-  kind: 'success' 
+const inst = PromptJS.Modal.open({
+  title: "Custom Dialog",
+  content: "HTML content or DOM element",
+  kind: 'info',  // Visual style
+  buttons: [
+    { 
+      text: "Save", 
+      variant: "primary",
+      closeOnClick: false,  // Keep modal open
+      onClick: async (inst) => {
+        // Handle action
+        await saveData();
+        inst.close('saved');  // Close manually
+      }
+    },
+    { text: "Cancel", variant: "neutral" }
+  ],
+  draggable: true,  // Make draggable on desktop
+  closeOnBackdrop: false,  // Prevent backdrop close
+  onClose: (reason) => console.log('Closed:', reason)
 });
 
-// With duration
-PromptJS.toast({ 
-  message: "This will disappear in 2 seconds", 
-  timeoutMs: 2000 
+// ModalInstance methods
+inst.update({ title: "New Title", content: "Updated content" });
+inst.close('custom-reason');
+inst.id;  // Unique modal ID
+inst.contentEl;  // Access content DOM element
+```
+
+#### **Modal.bare()** / **Modal.mount()** - Minimal wrapper
+```javascript
+const myElement = document.createElement('div');
+myElement.innerHTML = '<h1>Custom Content</h1>';
+
+// Both are equivalent (mount is an alias for bare)
+const inst = PromptJS.Modal.bare({
+  content: myElement,
+  closeOnEsc: true,
+  animate: true
+});
+
+// Or use the more semantic mount() alias
+const inst2 = PromptJS.Modal.mount({
+  content: myElement,
+  closeOnEsc: true
+});
+```
+
+### Toast Notifications
+```javascript
+// Simple
+PromptJS.toast({ message: "Saved!", kind: 'success' });
+
+// With actions
+PromptJS.toast({
+  message: "Connection lost",
+  kind: 'error',
+  actions: [
+    { text: "Retry", onClick: () => reconnect() },
+    { text: "Dismiss" }
+  ],
+  timeoutMs: 0,  // Never auto-dismiss
+  dismissible: true
 });
 
 // Different positions
-PromptJS.toast({ 
-  message: "Bottom right", 
-  position: 'bottom-right' 
-});
+PromptJS.toast({ message: "Top right", position: 'top-right' });
+PromptJS.toast({ message: "Bottom center", position: 'bottom-center' });
 ```
 
-### Custom Modal
-
+### Event Callbacks
 ```javascript
-const modal = new PromptJS.Modal({
-  title: "Custom Dialog",
-  content: "This is a custom modal with HTML content",
+Modal.open({
+  title: "Modal with Events",
+  content: "...",
+  onOpen: (inst) => {
+    console.log('Modal opened:', inst.id);
+    // Initialize, load data, etc.
+  },
+  onClose: (reason) => {
+    console.log('Modal closed with reason:', reason);
+    // Cleanup, save state, etc.
+  },
   buttons: [
-    { 
-      label: "Action", 
-      onClick: () => console.log("Action clicked") 
-    },
-    { 
-      label: "Close", 
-      variant: "secondary" 
+    {
+      text: "Save",
+      onClick: async (inst) => {
+        // Button click handler
+        await saveData();
+        inst.close('saved');  // Triggers onClose('saved')
+      }
     }
   ]
 });
-
-modal.open();
 ```
 
-### Question Dialog (Yes/No)
-
+### Per-Instance Overrides
 ```javascript
-const answer = await PromptJS.question("Do you want to continue?");
-if (answer) {
-  console.log("User clicked Yes");
-} else {
-  console.log("User clicked No");
-}
+// Override global config for specific modal
+Modal.open({
+  title: "Special Modal",
+  content: "...",
+  animate: false,  // No animation for this one
+  surfaceAlpha: 0.9,  // Custom backdrop
+  draggable: { handle: "header", axis: "y" }  // Drag vertically only
+});
+
+// Override global config for specific toast
+toast({
+  message: "Custom toast",
+  timeoutMs: 10000,  // Longer timeout
+  position: 'bottom-left',  // Different position
+  behavior: 'replace'  // Replace existing toasts
+});
 ```
 
 ---
 
-## 🧪 Recipes (Copy & Paste Ready)
+##  Common Patterns
 
-Practical snippets you can use as-is in your projects.
-
-### Recipe 1: Form in Modal with Async Validation
-
-Create a modal with a real DOM form, prevent closing on validation failure, and simulate an async API call.
-
+### Form in Modal with Validation
 ```javascript
-// Create a real DOM form to bypass string sanitization
 const form = document.createElement("form");
-form.innerHTML = `
-  <label style="display:block;margin:6px 0">
-    Name: <input id="name" required style="width:100%; margin-top:8px;" />
-  </label>
-  <small>Required. Press "Save" to simulate an async API call.</small>`;
+form.innerHTML = `<label>Name: <input id="name" required /></label>`;
 
 const inst = PromptJS.Modal.open({
-  title: "Create user",
+  title: "Create User",
   content: form,
   buttons: [
-    { id: "cancel", text: "Cancel", variant: "neutral" },
+    { text: "Cancel", variant: "neutral" },
     {
-      id: "save",
       text: "Save",
       variant: "primary",
-      closeOnClick: false, // stay open until we decide to close
-      onClick: async () => {
-        const input = form.querySelector("#name");
-        const name = input.value.trim();
-        if (!name) { input.focus(); return; } // do NOT close
-        
-        // Simulate network call
-        await new Promise((r) => setTimeout(r, 800));
-        
-        PromptJS.toast({ 
-          kind: "success", 
-          message: `User <b>${name}</b> created.` 
-        });
-        inst.close("save"); // close on success
-      },
-    },
-  ],
-  closeOnBackdrop: false,
-});
-```
-
-### Recipe 2: Multi-Step Wizard
-
-Use `inst.update()` to change modal content and buttons dynamically.
-
-```javascript
-let step = 1;
-
-const inst = PromptJS.Modal.open({
-  title: "Step 1 / 2",
-  content: "Choose where to go next.",
-  buttons: [
-    { 
-      id: "back", 
-      text: "Back", 
-      variant: "ghost", 
-      closeOnClick: false 
-    },
-    {
-      id: "next",
-      text: "Next",
-      variant: "primary",
       closeOnClick: false,
-      onClick: () => {
-        step = 2;
-        inst.update({
-          title: "Step 2 / 2",
-          content: "All set. Continue?",
-          buttons: [
-            {
-              id: "back",
-              text: "Back",
-              variant: "ghost",
-              closeOnClick: false,
-              onClick: () => {
-                step = 1;
-                inst.update({
-                  title: "Step 1 / 2",
-                  content: "Choose where to go next.",
-                  buttons: [
-                    { id: "back", text: "Back", variant: "ghost", closeOnClick: false },
-                    { 
-                      id: "next", 
-                      text: "Next", 
-                      variant: "primary", 
-                      closeOnClick: false, 
-                      onClick: () => {
-                        step = 2;
-                        inst.update({
-                          title: "Step 2 / 2",
-                          content: "All set. Continue?",
-                          buttons: [
-                            { id: "back", text: "Back", variant: "ghost", closeOnClick: false },
-                            { id: "finish", text: "Finish", variant: "primary" }
-                          ]
-                        });
-                      } 
-                    },
-                  ],
-                });
-              },
-            },
-            { id: "finish", text: "Finish", variant: "primary" },
-          ],
-        });
-      },
-    },
-  ],
+      onClick: async () => {
+        const name = form.querySelector("#name").value;
+        if (!name) return;
+        await fetch('/api/users', { method: 'POST', body: JSON.stringify({ name }) });
+        PromptJS.toast({ kind: 'success', message: 'User created!' });
+        inst.close();
+      }
+    }
+  ]
 });
 ```
 
-### Recipe 3: Status Toast (Replace Behavior)
-
-Show sequential status updates in the same toast position using replace behavior.
-
+### Status Updates (Replace Behavior)
 ```javascript
-// Save previous config
-const prev = PromptJS.config.get().toast;
-
-// Use replace behavior
-PromptJS.config.update({ 
-  toast: { 
-    behavior: "replace", 
-    defaultPosition: "bottom-center" 
-  }
-});
-
-// Show sequential status updates
-PromptJS.toast({ kind: "info", message: "Connecting…" });
-
-setTimeout(() => {
-  PromptJS.toast({ kind: "warning", message: "Still trying…" });
-}, 900);
-
-setTimeout(() => {
-  PromptJS.toast({ kind: "success", message: "Connected." });
-  
-  // Restore config after completion
-  setTimeout(() => {
-    PromptJS.config.update({ 
-      toast: { 
-        behavior: prev.behavior, 
-        defaultPosition: prev.defaultPosition 
-      } 
-    });
-  }, 800);
-}, 1800);
+PromptJS.config.update({ toast: { behavior: "replace", defaultPosition: "bottom-center" }});
+PromptJS.toast({ kind: "info", message: "Connectingâ€¦" });
+setTimeout(() => PromptJS.toast({ kind: "success", message: "Connected!" }), 1500);
 ```
 
-### Recipe 4: Retryable Error Toast
-
-Show an error toast with action buttons for retry functionality.
-
-```javascript
-PromptJS.toast({
-  kind: "error",
-  message: "Failed to save.",
-  actions: [
-    { 
-      text: "Retry", 
-      onClick: () => {
-        PromptJS.toast({ 
-          kind: "info", 
-          message: "Retrying…", 
-          timeoutMs: 1200 
-        });
-        
-        setTimeout(() => {
-          PromptJS.toast({ 
-            kind: "success", 
-            message: "Saved on retry." 
-          });
-        }, 1200);
-      } 
-    },
-    { text: "Dismiss" }
-  ],
-  timeoutMs: 0,        // Never auto-dismiss
-  dismissible: true    // Show close button
-});
-```
-
-### Recipe 5: Undo Pattern (Sticky Toast)
-
-Implement an undo action with a persistent toast.
-
+### Undo Pattern
 ```javascript
 PromptJS.toast({
   kind: "success",
-  message: "<b>Item archived</b>.",
+  message: "Item deleted",
   actions: [
-    { 
-      text: "Undo", 
-      onClick: () => {
-        PromptJS.toast({ 
-          kind: "info", 
-          message: "Restored." 
-        });
-        // Perform undo logic here
-      } 
-    },
+    { text: "Undo", onClick: () => { /* restore logic */ } },
     { text: "Close" }
   ],
-  timeoutMs: 0,        // Never auto-dismiss
-  dismissible: false   // No close button (force action choice)
+  timeoutMs: 0,
+  dismissible: false
 });
 ```
 
-### Recipe 6: Destructive Confirm
-
-Show a confirmation dialog for destructive actions with custom labels.
-
+### Locale Switching
 ```javascript
-const ok = await PromptJS.confirm("Delete this repository?", {
-  title: "Delete repository",
-  yesText: "Delete",
-  noText: "Keep",
-  includeCancel: true  // Add a third "Cancel" button
+PromptJS.i18n.use("es", {
+  locale: "es",
+  ok: "Aceptar",
+  cancel: "Cancelar",
+  titles: { info: "InformaciÃ³n", success: "Ã‰xito" }
 });
-
-if (ok) {
-  PromptJS.toast({ 
-    kind: "success", 
-    message: "Repository deleted." 
-  });
-} else {
-  PromptJS.toast({ 
-    kind: "info", 
-    message: "Kept as-is.", 
-    timeoutMs: 1500 
-  });
-}
+await PromptJS.alert("Â¡Hola!");
 ```
 
-### Recipe 7: Custom Container (Scoped Modals)
-
-Mount modals/toasts inside a specific panel instead of full-screen.
-
+### Scoped Modals (Custom Container)
 ```javascript
-// Create a host panel
-const host = document.createElement("div");
-host.style.cssText = "position:relative;min-height:160px;border:1px dashed #3a4253;padding:12px;border-radius:10px";
-host.innerHTML = "<b>Local mount:</b> modals/toasts appear within this box.";
-document.body.appendChild(host);
-
-// Save current config
-const prevContainer = PromptJS.config.get().container;
-const prevZ = PromptJS.config.get().zIndexBase;
-
-// Point PromptJS at the panel
-PromptJS.config.update({ 
-  container: host, 
-  zIndexBase: 10,
-  toast: { zBoost: 20 }
-});
-
-// Open a modal inside the panel
-PromptJS.Modal.open({ 
-  title: "Local modal", 
-  content: "I render inside the panel." 
-});
-
-// Clean up / revert after a moment
-setTimeout(() => {
-  PromptJS.config.update({ 
-    container: prevContainer || null, 
-    zIndexBase: prevZ || 2000 
-  });
-  host.remove();
-}, 3500);
-```
-
-### Recipe 8: One-Click Locale Switch
-
-Dynamically switch the UI language at runtime.
-
-```javascript
-const prevLocale = PromptJS.config.get().i18n.locale;
-
-// Register German translations
-PromptJS.i18n.use("de", {
-  locale: "de",
-  dir: "auto",
-  ok: "OK", 
-  cancel: "Abbrechen", 
-  yes: "Ja", 
-  no: "Nein",
-  close: "Schließen", 
-  dismiss: "Schließen",
-  titles: { 
-    info: "Information", 
-    success: "Erfolg", 
-    warning: "Warnung", 
-    error: "Fehler", 
-    question: "Frage" 
-  }
-});
-
-// Show alert in German
-await PromptJS.alert("Sprache gewechselt.", { title: "Hinweis" });
-
-// Restore previous locale
-if (prevLocale && prevLocale !== "de") {
-  PromptJS.i18n.set(prevLocale);
-} else {
-  PromptJS.i18n.set("en");
-}
+const panel = document.getElementById('my-panel');
+PromptJS.config.update({ container: panel, zIndexBase: 10 });
+// Modals now render inside panel
 ```
 
 ---
 
-## 🌐 Internationalization
-
-### Change Language
+##  Internationalization
 
 ```javascript
+// Spanish
 PromptJS.config.update({
   i18n: {
     locale: 'es',
     ok: 'Aceptar',
     cancel: 'Cancelar',
-    yes: 'Sí',
-    no: 'No',
-    close: 'Cerrar',
-    dismiss: 'Descartar',
-    titles: {
-      info: 'Información',
-      success: 'Éxito',
-      warning: 'Advertencia',
-      error: 'Error',
-      question: 'Pregunta'
-    }
+    titles: { success: 'Ã‰xito', error: 'Error' }
   }
 });
-```
 
-### RTL Support
-
-```javascript
+// RTL (Arabic, Hebrew, etc.)
 PromptJS.config.update({
-  i18n: {
-    locale: 'ar',
-    dir: 'rtl', // Right-to-left
-    ok: 'حسناً',
-    cancel: 'إلغاء'
-  }
+  i18n: { locale: 'ar', dir: 'rtl', ok: 'Ø­Ø³Ù†Ø§Ù‹', cancel: 'Ø¥Ù„ØºØ§Ø¡' }
 });
 ```
 
 ---
 
-## 🔧 TypeScript Support
+##  TypeScript Support
 
 PromptJS is written in TypeScript and includes full type definitions:
 
@@ -876,380 +788,144 @@ const result: string | null = await prompt("Name?", "", {
 
 ---
 
-## ⚛️ React Integration
+##  React Integration
+**Hooks**: `useDialogs()`, `useToast()`, `useModal()`, `useBareModal()`, `usePrompt()`
 
-PromptJS has official React bindings with hooks and context support!
-
-### Installation
+📖 **Full React Docs**: [packages/react/README.md](./packages/react/README.md)
 
 ```bash
 npm install @tlabsinc/promptjs-react @tlabsinc/promptjs-core
 ```
 
-### Basic Usage (No Provider Needed)
-
+**Basic Usage**:
 ```tsx
 import { useDialogs } from '@tlabsinc/promptjs-react';
-import '@tlabsinc/promptjs-core/dist/promptjs.css';
 
 function MyComponent() {
   const { alert, confirm, prompt } = useDialogs();
   
   const handleClick = async () => {
-    await alert("Hello from React!");
-    
-    const ok = await confirm("Delete this item?");
-    if (ok) {
-      const reason = await prompt("Why?");
-      console.log(reason);
-    }
+    const name = await prompt("Your name?");
+    if (name) await alert(`Hello ${name}!`);
   };
   
-  return <button onClick={handleClick}>Show Dialogs</button>;
+  return <button onClick={handleClick}>Click</button>;
 }
 ```
 
-### With Provider (Recommended)
-
+**With Provider** (Recommended):
 ```tsx
 import { PromptProvider, useDialogs, useToast } from '@tlabsinc/promptjs-react';
-import '@tlabsinc/promptjs-core/dist/promptjs.css';
 
 function App() {
   return (
     <PromptProvider theme="auto">
-      <YourApp />
+      <MyApp />
     </PromptProvider>
   );
 }
-
-function YourApp() {
-  const { alert, confirm, prompt } = useDialogs();
-  const toast = useToast();
-  
-  const handleSave = async () => {
-    const name = await prompt("Enter your name:");
-    if (name) {
-      toast({ kind: 'success', message: `Saved ${name}!` });
-    }
-  };
-  
-  return <button onClick={handleSave}>Save</button>;
-}
 ```
 
-### React Hooks
+**Hooks**: `useDialogs()`, `useToast()`, `useModal()`, `usePrompt()`
 
-#### `useDialogs()`
-```tsx
-const { alert, confirm, question, prompt } = useDialogs();
-```
-
-#### `useToast()`
-```tsx
-const toast = useToast();
-toast({ message: "Saved!", kind: 'success' });
-```
-
-#### `useModal()`
-```tsx
-const openModal = useModal();
-const inst = openModal({ title: "Hello", content: "World" });
-```
-
-#### `usePrompt()`
-```tsx
-const { config, Modal, i18n, version } = usePrompt();
-```
-
-### React Example: Registration Form
-
-```tsx
-import { useDialogs, useToast } from '@tlabsinc/promptjs-react';
-
-function RegistrationButton() {
-  const { prompt, confirm } = useDialogs();
-  const toast = useToast();
-  
-  const handleRegister = async () => {
-    const username = await prompt(
-      "Choose a username:",
-      "",
-      {
-        required: true,
-        validator: (v) => v.length >= 3 ? true : "Too short"
-      }
-    );
-    if (!username) return;
-    
-    const email = await prompt("Your email:", "", { 
-      inputType: 'email',
-      required: true 
-    });
-    if (!email) return;
-    
-    const ok = await confirm(`Register as ${username}?`);
-    if (ok) {
-      // Register logic
-      toast({ kind: 'success', message: 'Account created!' });
-    }
-  };
-  
-  return <button onClick={handleRegister}>Register</button>;
-}
-```
-
-**📖 Full React Documentation**: [React Package README](./packages/react/README.md)
+ðŸ“– **Full React Docs**: [packages/react/README.md](./packages/react/README.md)
 
 ---
 
-## 📚 API Reference
+##  API Quick Reference
 
-### `alert(message, options?)`
-
-Show an informational alert.
+### Dialog Functions
 
 ```typescript
-await PromptJS.alert("Hello World");
-await PromptJS.alert("Success!", { kind: 'success' });
-await PromptJS.alert("Warning", { kind: 'warning', title: 'Alert' });
+// Alert - Returns Promise<void>
+await alert(message, { title?, kind?, okText? })
+
+// Confirm - Returns Promise<boolean>
+await confirm(message, { title?, kind?, okText?, cancelText? })
+
+// Prompt - Returns Promise<string | null>
+await prompt(message, defaultValue?, {
+  title?, inputType?, required?, pattern?, maxLength?,
+  minLength?, validator?, okText?, cancelText?
+})
+
+// Question - Returns Promise<boolean>
+await question(message, { title? })
+
+// Toast - Returns void
+toast({
+  message, kind?, title?, timeoutMs?, position?,
+  dismissible?, actions?
+})
 ```
 
-**Parameters:**
-- `message` (string): The message to display
-- `options` (optional):
-  - `title` (string): Dialog title
-  - `kind` ('info' | 'success' | 'warning' | 'error'): Visual style
-  - `okText` (string): OK button text
+### Key Options
 
-**Returns:** `Promise<void>`
+| Function | Key Options | Return |
+|----------|-------------|--------|
+| `alert()` | `kind`, `title`, `okText` | `Promise<void>` |
+| `confirm()` | `kind`, `title`, `okText`, `cancelText` | `Promise<boolean>` |
+| `prompt()` | `inputType`, `required`, `validator`, `pattern` | `Promise<string \| null>` |
+| `question()` | `title` | `Promise<boolean>` |
+| `toast()` | `kind`, `position`, `timeoutMs`, `actions` | `void` |
 
----
+### Input Types (prompt)
+`'text'` | `'password'` | `'email'` | `'number'` | `'tel'` | `'url'`
 
-### `confirm(message, options?)`
+### Dialog Kinds
+`'info'` | `'success'` | `'warning'` | `'error'` | `'question'`
 
-Show a confirmation dialog.
-
-```typescript
-const ok = await PromptJS.confirm("Delete?");
-const ok = await PromptJS.confirm("Are you sure?", {
-  title: "Confirm",
-  okText: "Yes",
-  cancelText: "No"
-});
-```
-
-**Parameters:**
-- `message` (string): The message to display
-- `options` (optional):
-  - `title` (string): Dialog title
-  - `kind` ('info' | 'success' | 'warning' | 'error'): Visual style
-  - `okText` (string): OK button text
-  - `cancelText` (string): Cancel button text
-
-**Returns:** `Promise<boolean>` - `true` if OK clicked, `false` if cancelled
+### Toast Positions
+`'top-left'` | `'top-center'` | `'top-right'` | `'bottom-left'` | `'bottom-center'` | `'bottom-right'`
 
 ---
 
-### `prompt(message, defaultValue?, options?)`
+##  Migration from Native APIs
 
-Show a prompt dialog for user input.
+| Native | PromptJS |
+|--------|----------|
+| `alert("Hi")` | `await PromptJS.alert("Hi")` |
+| `confirm("OK?")` | `await PromptJS.confirm("OK?")` |
+| `prompt("Name?")` | `await PromptJS.prompt("Name?")` |
 
-```typescript
-const name = await PromptJS.prompt("Your name?");
-const email = await PromptJS.prompt("Email?", "", { inputType: 'email' });
-const age = await PromptJS.prompt("Age?", "", {
-  inputType: 'number',
-  required: true,
-  validator: (val) => parseInt(val) > 0 ? true : "Invalid"
-});
-```
-
-**Parameters:**
-- `message` (string): The prompt message
-- `defaultValue` (string, optional): Default input value
-- `options` (optional):
-  - `title` (string): Dialog title
-  - `inputType` ('text' | 'password' | 'email' | 'number' | 'tel' | 'url'): Input type
-  - `required` (boolean): Make input required
-  - `pattern` (string): Regex pattern for validation
-  - `maxLength` (number): Maximum length
-  - `minLength` (number): Minimum length
-  - `validator` (function): Custom validation function
-  - `okText` (string): OK button text
-  - `cancelText` (string): Cancel button text
-
-**Returns:** `Promise<string | null>` - Input value or `null` if cancelled
+**Benefits**: âœ… Async/Await âœ… Modern UI âœ… Validation âœ… Accessible âœ… Themeable
 
 ---
 
-### `question(message, options?)`
+##  Troubleshooting
 
-Show a yes/no question dialog.
-
-```typescript
-const yes = await PromptJS.question("Continue?");
-```
-
-**Returns:** `Promise<boolean>` - `true` for Yes, `false` for No
-
----
-
-### `toast(options)`
-
-Show a temporary notification.
-
-```typescript
-PromptJS.toast({ message: "Saved!" });
-PromptJS.toast({ 
-  message: "Error occurred", 
-  kind: 'error',
-  timeoutMs: 3000 
-});
-```
-
-**Parameters:**
-- `message` (string): Toast message
-- `kind` ('info' | 'success' | 'warning' | 'error', optional): Visual style
-- `timeoutMs` (number, optional): Auto-dismiss duration (ms)
-- `position` (string, optional): Toast position
-- `dismissible` (boolean, optional): Show close button
+| Issue | Solution |
+|-------|----------|
+| Dialogs not showing | Check: `console.log(window.PromptJS)` should be defined |
+| Behind other elements | `config.update({ zIndexBase: 9999 })` |
+| Theme not applying | Set before showing: `config.update({ theme: 'dark' })` |
+| Validation not working | Use `closeOnClick: false` on buttons |
+| Toast not dismissing | Set `timeoutMs: 0` for sticky toasts |
 
 ---
 
-## 🎓 Migration from Native APIs
+##  Pro Tips
 
-### Replace Native `alert()`
-
-```javascript
-// Before
-alert("Hello");
-
-// After
-await PromptJS.alert("Hello");
-// or
-await PJ.alert("Hello");
-```
-
-### Replace Native `confirm()`
-
-```javascript
-// Before
-if (confirm("Delete?")) {
-  deleteItem();
-}
-
-// After
-if (await PromptJS.confirm("Delete?")) {
-  deleteItem();
-}
-```
-
-### Replace Native `prompt()`
-
-```javascript
-// Before
-const name = prompt("Name?", "Guest");
-if (name) {
-  greet(name);
-}
-
-// After
-const name = await PromptJS.prompt("Name?", "Guest");
-if (name) {
-  greet(name);
-}
-```
-
-**Key Differences:**
-- ✅ **Async/Await**: Use `await` (non-blocking)
-- ✅ **Modern UI**: Beautiful, themed dialogs
-- ✅ **Validation**: Built-in input validation
-- ✅ **Accessible**: ARIA labels, keyboard navigation
-- ✅ **Customizable**: Full control over appearance
+- **Shorthand**: Use `window.PJ = window.PromptJS` for brevity
+- **Configure Once**: Set global config at app initialization
+- **Auto Theme**: Use `theme: 'auto'` for system preference
+- **Validation**: Built-in validators (required, pattern) before custom
+- **Non-Blocking**: Always `await` dialog functions
 
 ---
 
-## 🐛 Troubleshooting
+##  Bundle Size
 
-### Dialogs Not Showing
-
-1. **Check CSS is loaded:**
-   ```html
-   <link rel="stylesheet" href="/path/to/promptjs.css">
-   ```
-
-2. **Check JS is loaded:**
-   ```html
-   <script src="/path/to/prompt.js"></script>
-   ```
-
-3. **Check console for errors:**
-   ```javascript
-   console.log(window.PromptJS); // Should not be undefined
-   ```
-
-### Z-Index Issues
-
-If dialogs appear behind other elements:
-
-```javascript
-PromptJS.config.update({
-  zIndexBase: 9999 // Increase if needed
-});
-```
-
-### Theme Not Working
-
-Ensure you're setting theme before showing dialogs:
-
-```javascript
-// Set theme first
-PromptJS.config.update({ theme: 'dark' });
-
-// Then show dialog
-await PromptJS.alert("Hello");
-```
+~7KB gzipped total â€¢ Zero dependencies ðŸŽ‰
 
 ---
 
-## 📦 Bundle Sizes
+##  Resources
 
-- **prompt.js**: ~15KB minified, ~5KB gzipped
-- **promptjs.css**: ~8KB minified, ~2KB gzipped
-- **Total**: ~7KB gzipped
-
-Zero dependencies! 🎉
+- [Full API Docs](./doc/) â€¢ [Examples](./packages/core/demo-*.html)
+- [GitHub](https://github.com/tlabsinc/promptjs) â€¢ [NPM](https://www.npmjs.com/package/@tlabsinc/promptjs-core)
+- [React Package](./packages/react/README.md)
 
 ---
 
-## 🔗 Resources
-
-- **Documentation**: [Full API Docs](./doc/)
-- **Examples**: [Demo Files](./packages/core/demo-*.html)
-- **GitHub**: [github.com/tlabsinc/promptjs](https://github.com/tlabsinc/promptjs)
-- **NPM**: [@tlabsinc/promptjs-core](https://www.npmjs.com/package/@tlabsinc/promptjs-core)
-
----
-
-## 💡 Pro Tips
-
-1. **Use Shorthand**: Assign `window.PJ = window.PromptJS` for shorter syntax
-2. **Configure Once**: Set global config in your app initialization
-3. **Async/Await**: Always use `await` for better control flow
-4. **Validation**: Use built-in validators before custom ones
-5. **Theming**: Use `auto` theme for automatic light/dark switching
-
----
-
-## ✨ What's Next?
-
-- [Advanced Modal Customization](./doc/ADVANCED-MODALS.md)
-- [Custom Styling Guide](./doc/STYLING.md)
-- [React Integration](./packages/react/README.md)
-- [Accessibility Features](./doc/ACCESSIBILITY.md)
-
----
-
-**Made with ❤️ by TLabs**  
-Licensed under MIT
+**Made with â¤ï¸ by TLabs** â€¢ MIT License

@@ -285,11 +285,17 @@ declare const config: {
 
 declare function open(options: ModalOptions): ModalInstance;
 declare function bare(options?: BareModalOptions): ModalInstance;
+/**
+ * Alias for bare() - mounts custom content in a minimal modal wrapper.
+ * Provides a more semantic name for mounting DOM elements.
+ */
+declare const mount: typeof bare;
 
 declare const modal_bare: typeof bare;
+declare const modal_mount: typeof mount;
 declare const modal_open: typeof open;
 declare namespace modal {
-  export { modal_bare as bare, modal_open as open };
+  export { modal_bare as bare, modal_mount as mount, modal_open as open };
 }
 
 /**

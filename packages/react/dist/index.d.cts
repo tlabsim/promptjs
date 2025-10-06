@@ -45,5 +45,13 @@ declare function useDialogs(): {
  * returning the instance handle if you need to update/close it.
  */
 declare function useModal(): (opts: Parameters<typeof Modal.open>[0]) => _tlabsinc_promptjs_core.ModalInstance;
+/**
+ * Hook for mounting custom content in a minimal modal wrapper.
+ * Returns stable callbacks for both bare() and mount() (they're aliases).
+ */
+declare function useBareModal(): {
+    bare: (opts: Parameters<typeof Modal.bare>[0]) => _tlabsinc_promptjs_core.ModalInstance;
+    mount: (opts: Parameters<typeof Modal.bare>[0]) => _tlabsinc_promptjs_core.ModalInstance;
+};
 
-export { type PromptContextValue, PromptProvider, type PromptProviderProps, type PromptTheme, useDialogs, useModal, usePrompt, useToast };
+export { type PromptContextValue, PromptProvider, type PromptProviderProps, type PromptTheme, useBareModal, useDialogs, useModal, usePrompt, useToast };

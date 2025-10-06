@@ -31,6 +31,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var index_exports = {};
 __export(index_exports, {
   PromptProvider: () => PromptProvider,
+  useBareModal: () => useBareModal,
   useDialogs: () => useDialogs,
   useModal: () => useModal,
   usePrompt: () => usePrompt,
@@ -106,9 +107,17 @@ function useModal() {
     return ctx.Modal.open(opts);
   }, [ctx]);
 }
+function useBareModal() {
+  const ctx = usePrompt();
+  return React2.useMemo(() => ({
+    bare: (opts) => ctx.Modal.bare(opts),
+    mount: (opts) => ctx.Modal.mount(opts)
+  }), [ctx]);
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   PromptProvider,
+  useBareModal,
   useDialogs,
   useModal,
   usePrompt,

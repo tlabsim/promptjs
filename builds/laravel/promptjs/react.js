@@ -76,8 +76,16 @@ function useModal() {
     return ctx.Modal.open(opts);
   }, [ctx]);
 }
+function useBareModal() {
+  const ctx = usePrompt();
+  return React2.useMemo(() => ({
+    bare: (opts) => ctx.Modal.bare(opts),
+    mount: (opts) => ctx.Modal.mount(opts)
+  }), [ctx]);
+}
 export {
   PromptProvider,
+  useBareModal,
   useDialogs,
   useModal,
   usePrompt,

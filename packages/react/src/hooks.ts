@@ -35,3 +35,15 @@ export function useModal() {
     return ctx.Modal.open(opts);
   }, [ctx]);
 }
+
+/**
+ * Hook for mounting custom content in a minimal modal wrapper.
+ * Returns stable callbacks for both bare() and mount() (they're aliases).
+ */
+export function useBareModal() {
+  const ctx = usePrompt();
+  return React.useMemo(() => ({
+    bare: (opts: Parameters<typeof Modal.bare>[0]) => ctx.Modal.bare(opts),
+    mount: (opts: Parameters<typeof Modal.bare>[0]) => ctx.Modal.mount(opts)
+  }), [ctx]);
+}
