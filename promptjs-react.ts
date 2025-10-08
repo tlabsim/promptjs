@@ -35,6 +35,17 @@
 import { useCallback, useMemo, useEffect } from 'react';
 
 // ============================================================================
+// GLOBAL TYPE DECLARATIONS
+// ============================================================================
+
+declare global {
+  interface Window {
+    PromptJS?: any;
+    PJ?: any;
+  }
+}
+
+// ============================================================================
 // CORE TYPE EXPORTS
 // ============================================================================
 
@@ -171,6 +182,10 @@ export type ModalDraggable =
  * Base options shared by all modal types
  */
 export interface BaseModalOptions {
+  // Content
+  /** Modal title (optional) */
+  title?: string;
+
   // Visual & sizing
   /** Modal size or custom dimensions */
   size?: ModalSize | { w?: number | string; h?: number | string };
@@ -200,6 +215,8 @@ export interface BaseModalOptions {
   showClose?: boolean;
   /** ARIA label for close button */
   closeAriaLabel?: string;
+  /** Button ID to focus on modal open */
+  defaultButtonId?: string;
 
   // Accent styling
   /** Visual kind/type for styling */
@@ -222,9 +239,7 @@ export interface BaseModalOptions {
  * Full-featured modal with header, content, and buttons
  */
 export interface ModalOptions extends BaseModalOptions {
-  /** Modal title */
-  title?: string;
-  /** Modal content (HTML string or DOM element) */
+  /** Modal content (HTML string or DOM element) - required */
   content: string | Node;
   /** Allow unsafe HTML (bypasses sanitization) */
   unsafeHTML?: boolean;
@@ -235,7 +250,7 @@ export interface ModalOptions extends BaseModalOptions {
 /**
  * Minimal modal wrapper (no header/footer chrome)
  */
-export interface BareModalOptions extends Omit<ModalOptions, "title" | "buttons" | "content" | "unsafeHTML"> {
+export interface BareModalOptions extends Omit<BaseModalOptions, "title"> {
   /** Show window chrome (default: true) */
   windowed?: boolean;
   /** Optional initial content */
@@ -270,42 +285,49 @@ export interface ModalInstance {
 
 /**
  * Alert dialog options
+ * Extends BaseModalOptions for full modal configuration (showClose, draggable, animate, etc.)
+ * 
+ * @remarks
+ * Alert resolves when the user clicks OK, presses ESC, clicks backdrop, or clicks the close button.
+ * All dismissal methods simply resolve the promise (no return value).
  */
-export interface AlertOptions {
-  /** Dialog title */
-  title?: string;
-  /** Visual kind */
-  kind?: NotifyKind;
+export interface AlertOptions extends BaseModalOptions {
   /** OK button text (default: from i18n) */
   okText?: string;
 }
 
 /**
  * Confirm dialog options (Yes/No)
+ * Extends BaseModalOptions for full modal configuration (showClose, draggable, animate, etc.)
+ * 
+ * @remarks
+ * Returns `true` if user clicks Yes, `false` if user clicks No or Cancel.
+ * ESC, backdrop, and close button are treated as "Cancel" (returns `false`).
  */
-export interface ConfirmOptions {
-  /** Dialog title */
-  title?: string;
-  /** Visual kind */
-  kind?: NotifyKind;
-  /** Yes button text (default: from i18n) */
+export interface ConfirmOptions extends BaseModalOptions {
+  /** Yes button text (default: "Yes") */
   yesText?: string;
-  /** No button text (default: from i18n) */
+  /** No button text (default: "No") */
   noText?: string;
   /** Include Cancel button */
   includeCancel?: boolean;
-  /** Cancel button text (default: from i18n) */
+  /** Cancel button text (default: "Cancel") */
   cancelText?: string;
 }
 
 /**
  * Prompt dialog options (text input)
+ * Extends BaseModalOptions for full modal configuration (showClose, draggable, animate, etc.)
+ * 
+ * @remarks
+ * Returns the input value if user clicks OK, or `null` if cancelled/dismissed.
+ * ESC, backdrop, close button, and Cancel button all return `null`.
+ * 
+ * Validation is performed on both Enter key and OK button click.
+ * Invalid input displays error message and prevents submission.
+ * Both `required` and `minLength` use trimmed values for consistency.
  */
-export interface PromptOptions {
-  /** Dialog title */
-  title?: string;
-  /** Visual kind */
-  kind?: NotifyKind;
+export interface PromptOptions extends BaseModalOptions {
   /** OK button text (default: from i18n) */
   okText?: string;
   /** Cancel button text (default: from i18n) */
@@ -314,36 +336,41 @@ export interface PromptOptions {
   placeholder?: string;
   /** Input type */
   inputType?: InputType;
-  /** Input is required */
+  /** Input is required (validates trimmed value) */
   required?: boolean;
   /** Maximum input length */
   maxLength?: number;
-  /** Minimum input length */
+  /** Minimum input length (validates trimmed value) */
   minLength?: number;
-  /** Regex pattern for validation */
+  /** Regex pattern for validation (errors are caught gracefully) */
   pattern?: string;
-  /** Custom validator function (returns true or error message) */
+  /** Custom validator function (exceptions are caught gracefully) */
   validator?: (value: string) => boolean | string;
 }
 
 /**
  * Question dialog options (custom buttons)
+ * Extends BaseModalOptions for full modal configuration (showClose, draggable, animate, etc.)
+ * 
+ * @remarks
+ * Returns `{ id: string }` when any button is clicked.
+ * 
+ * **Dismissal Behavior:**
+ * - If `onDismissal` is provided, ESC/backdrop/close button will resolve with that button ID
+ * - If `onDismissal` is not provided, ESC/backdrop/close button will NOT close the dialog
+ *   (useful for critical dialogs that require explicit button selection)
+ * 
+ * **Button Validation:**
+ * - At least one button is required (throws error if buttons array is empty)
+ * - Each button must have a unique `id` for proper event handling
  */
-export interface QuestionOptions {
-  /** Dialog title */
-  title?: string;
+export interface QuestionOptions extends BaseModalOptions {
   /** Question message */
   message: string;
-  /** Visual kind */
-  kind?: NotifyKind;
-  /** Custom buttons */
+  /** Custom buttons (at least one required) */
   buttons: QuestionButton[];
-  /** Default button ID */
-  defaultId?: string;
-  /** Value returned when ESC is pressed */
-  escReturns?: string | null;
-  /** Value returned when backdrop is clicked */
-  backdropReturns?: string | null;
+  /** Value returned when dismissed (ESC, backdrop, or close button clicked) */
+  onDismissal?: string;
 }
 
 /**
@@ -637,10 +664,10 @@ export type PartialPromptJSConfig = Partial<{
  * The core library declares window.PromptJS as 'any', so we provide proper types here
  */
 export interface PromptJSAPI {
-  alert: (message: string, options?: AlertOptions) => Promise<void>;
-  confirm: (message: string, options?: ConfirmOptions) => Promise<boolean>;
-  prompt: (message: string, defaultValue?: string, options?: PromptOptions) => Promise<string | null>;
-  question: (options: QuestionOptions) => Promise<{ id: string }>;
+  alert: (message: string, opts?: AlertOptions) => Promise<void>;
+  confirm: (message: string, opts?: ConfirmOptions) => Promise<boolean>;
+  prompt: (message: string, defaultValue?: string, opts?: PromptOptions) => Promise<string | null>;
+  question: (opts: QuestionOptions) => Promise<{ id: string }>;
   toast: (options: ToastOptions) => void;
   Modal: {
     open: (options: ModalOptions) => ModalInstance;
@@ -939,11 +966,13 @@ export function usePromptJSThemeSync(theme: Theme): void {
  *   const confirmed = await confirm("Delete this item?", {
  *     kind: 'warning',
  *     yesText: 'Delete',
- *     noText: 'Cancel'
+ *     noText: 'Cancel',
+ *     draggable: true,  // All BaseModalOptions available
+ *     showClose: true
  *   });
  *   
  *   if (confirmed) {
- *     await alert("Item deleted!", { kind: 'success' });
+ *     await alert("Item deleted!", { kind: 'success', animate: true });
  *   }
  * };
  * 
@@ -955,7 +984,11 @@ export function usePromptJSThemeSync(theme: Theme): void {
  *       { id: 'save', text: 'Save', variant: 'primary' },
  *       { id: 'discard', text: 'Discard', variant: 'danger' },
  *       { id: 'cancel', text: 'Cancel', variant: 'neutral' }
- *     ]
+ *     ],
+ *     onDismissal: 'cancel',     // Handle ESC/backdrop/close button
+ *     showClose: true,           // Show close button (uses onDismissal value)
+ *     draggable: true,           // Make modal draggable
+ *     defaultButtonId: 'save'    // Focus Save button by default
  *   });
  *   
  *   console.log('User chose:', result.id); // 'save', 'discard', or 'cancel'
@@ -966,23 +999,23 @@ export const useDialogs = () => {
   const pjs = getPromptJS();
   
   const alert = useCallback(
-    (message: string, options?: AlertOptions) => pjs.alert(message, options),
+    (message: string, opts?: AlertOptions) => pjs.alert(message, opts),
     []
   );
 
   const confirm = useCallback(
-    (message: string, options?: ConfirmOptions) => pjs.confirm(message, options),
+    (message: string, opts?: ConfirmOptions) => pjs.confirm(message, opts),
     []
   );
 
   const prompt = useCallback(
-    (message: string, defaultValue?: string, options?: PromptOptions) =>
-      pjs.prompt(message, defaultValue, options),
+    (message: string, defaultValue?: string, opts?: PromptOptions) =>
+      pjs.prompt(message, defaultValue, opts),
     []
   );
 
   const question = useCallback(
-    (options: QuestionOptions) => pjs.question(options),
+    (opts: QuestionOptions) => pjs.question(opts),
     []
   );
 

@@ -30,6 +30,7 @@ type ModalDraggable = boolean | {
     cursor?: string | null;
 };
 interface BaseModalOptions {
+    title?: string;
     size?: 'sm' | 'md' | 'lg' | {
         w?: number | string;
         h?: number | string;
@@ -44,6 +45,7 @@ interface BaseModalOptions {
     onClose?: (result?: unknown) => void;
     showClose?: boolean;
     closeAriaLabel?: string;
+    defaultButtonId?: string;
     kind?: NotifyKind;
     surfaceAlpha?: number;
     dialogBlurPx?: number;
@@ -51,12 +53,11 @@ interface BaseModalOptions {
     draggable?: ModalDraggable;
 }
 interface ModalOptions extends BaseModalOptions {
-    title?: string;
     content: string | Node;
     unsafeHTML?: boolean;
     buttons?: ButtonDef[];
 }
-interface BareModalOptions extends Omit<ModalOptions, "title" | "buttons" | "content" | "unsafeHTML"> {
+interface BareModalOptions extends Omit<BaseModalOptions, "title"> {
     /** PromptJS chrome (header chrome off by default). Default: true */
     windowed?: boolean;
     /** Optional initial content (sanitized unless unsafeHTML). */
@@ -73,28 +74,23 @@ interface ModalInstance {
     readonly el: HTMLDivElement;
     readonly contentEl: HTMLElement;
 }
-interface AlertOptions {
-    title?: string;
-    kind?: NotifyKind;
+interface AlertOptions extends BaseModalOptions {
     okText?: string;
 }
-interface ConfirmOptions {
-    title?: string;
-    kind?: NotifyKind;
+interface ConfirmOptions extends BaseModalOptions {
     yesText?: string;
     noText?: string;
     includeCancel?: boolean;
     cancelText?: string;
 }
-interface PromptOptions {
-    title?: string;
-    kind?: NotifyKind;
+interface PromptOptions extends BaseModalOptions {
     okText?: string;
     cancelText?: string;
     placeholder?: string;
     inputType?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';
     required?: boolean;
     maxLength?: number;
+    minLength?: number;
     pattern?: string;
     validator?: (value: string) => boolean | string;
 }
@@ -103,14 +99,10 @@ interface QuestionButton {
     text: string;
     variant?: ButtonVariant;
 }
-interface QuestionOptions {
-    title?: string;
+interface QuestionOptions extends BaseModalOptions {
     message: string;
-    kind?: NotifyKind;
     buttons: QuestionButton[];
-    defaultId?: string;
-    escReturns?: string | null;
-    backdropReturns?: string | null;
+    onDismissal?: string;
 }
 /** Where the toast appears. */
 type ToastPosition = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
@@ -311,39 +303,12 @@ declare function toast(opts: ToastOptions): {
     dismiss: () => void;
 };
 
-/**
- * PromptJS – question.ts
- * Promise-based dialogs built on the modal primitive.
- * Author: Iftekhar Mahmud Towhid (tlabs.im@gmail.com)
- *
- * APIs:
- *   - question(opts): fully configurable buttons; resolves { id } of the chosen action
- *   - confirm(message, opts?): convenience wrapper resolving boolean
- *   - alert(message, opts?): convenience wrapper that resolves on acknowledge
- *
- * Extras:
- *   - Map ESC/backdrop to specific return IDs via `escReturns` / `backdropReturns`
- *   - Uses modal button plumbing; no direct DOM markup required by callers
- */
-declare function question(opts: {
-    title?: string;
-    message: string;
-    buttons: Array<{
-        id: string;
-        text: string;
-        variant?: 'primary' | 'neutral' | 'danger';
-    }>;
-    defaultId?: string;
-    escReturns?: string | null;
-    backdropReturns?: string | null;
-}): Promise<{
+declare function question(opts: QuestionOptions): Promise<{
     id: string;
 }>;
-declare function confirm(message: string, extra?: Partial<Parameters<typeof question>[0]>): Promise<boolean>;
-declare function alert(message: string, opts?: {
-    title?: string;
-}): Promise<void>;
-declare function prompt(message: string, defaultValue?: string, opts?: Partial<PromptOptions>): Promise<string | null>;
+declare function confirm(message: string, opts?: ConfirmOptions): Promise<boolean>;
+declare function alert(message: string, opts?: AlertOptions): Promise<void>;
+declare function prompt(message: string, defaultValue?: string, opts?: PromptOptions): Promise<string | null>;
 
 /**
  * PromptJS – i18n.ts

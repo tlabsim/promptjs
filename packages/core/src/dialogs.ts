@@ -1,5 +1,5 @@
 /**
- * PromptJS – question.ts
+ * PromptJS – dialogs.ts
  * Promise-based dialogs built on the modal primitive.
  * Author: Iftekhar Mahmud Towhid (tlabs.im@gmail.com)
  *
@@ -7,9 +7,11 @@
  *   - question(opts): fully configurable buttons; resolves { id } of the chosen action
  *   - confirm(message, opts?): convenience wrapper resolving boolean
  *   - alert(message, opts?): convenience wrapper that resolves on acknowledge
+ *   - prompt(message, defaultValue?, opts?): convenience wrapper for text input
  *
- * Extras:
- *   - Map ESC/backdrop to specific return IDs via `escReturns` / `backdropReturns`
+ * Features:
+ *   - All dialogs support optional title via opts.title
+ *   - question() supports onDismissal for handling ESC/backdrop/close button
  *   - Uses modal button plumbing; no direct DOM markup required by callers
  */
 
@@ -17,57 +19,72 @@ import { open } from './modal';
 import { config } from './config';
 import type { QuestionOptions, ConfirmOptions, AlertOptions } from './types';
 
-export async function question(opts: {
-  title?: string;
-  message: string;
-  buttons: Array<{ id: string; text: string; variant?: 'primary'|'neutral'|'danger' }>;
-  defaultId?: string;
-  escReturns?: string | null;
-  backdropReturns?: string | null;
-}): Promise<{ id: string }> {
+export async function question(opts: QuestionOptions): Promise<{ id: string }> {
+  const { message, buttons, onDismissal, title, ...modalOpts } = opts;
+  
+  // Validation
+  if (!buttons || buttons.length === 0) {
+    throw new Error('[PromptJS] question() requires at least one button');
+  }
+  
   return new Promise((resolve) => {
     const m = open({
-      title: opts.title,
-      content: opts.message,
-      buttons: opts.buttons.map(b => ({
+      ...modalOpts,
+      title,
+      content: message,
+      buttons: buttons.map(b => ({
         ...b,
         closeOnClick: true,
         onClick: () => resolve({ id: b.id }),
       })),
-      closeOnEsc: opts.escReturns !== null,
-      closeOnBackdrop: opts.backdropReturns !== null,
       onClose: (r) => {
-        if (r === 'esc' && opts.escReturns) resolve({ id: opts.escReturns });
-        else if (r === 'backdrop' && opts.backdropReturns) resolve({ id: opts.backdropReturns });
+        // Handle dismissal (ESC, backdrop, close button)
+        // If onDismissal is not provided, modal won't resolve on dismissal
+        // User must click a button to get a response
+        if (['esc', 'backdrop', 'close'].includes(r as string) && onDismissal) {
+          resolve({ id: onDismissal });
+        }
       }
     });
-    // default focus can be added later
   });
 }
 
-export async function confirm(message: string, extra?: Partial<Parameters<typeof question>[0]>): Promise<boolean> {
+export async function confirm(message: string, opts?: ConfirmOptions): Promise<boolean> {
+  const buttons: Array<{ id: string; text: string; variant: 'primary'|'neutral'|'danger' }> = [
+    { id: 'yes', text: opts?.yesText ?? 'Yes', variant: 'primary' },
+    { id: 'no', text: opts?.noText ?? 'No', variant: 'neutral' },
+  ];
+  
+  if (opts?.includeCancel) {
+    buttons.push({ id: 'cancel', text: opts?.cancelText ?? 'Cancel', variant: 'neutral' });
+  }
+
   const { id } = await question({
+    ...opts,
+    title: opts?.title,
     message,
-    title: extra?.title,
-    buttons: [
-      { id: 'yes', text: (extra as any)?.yesText ?? 'Yes', variant: 'primary' },
-      { id: 'no', text: (extra as any)?.noText ?? 'No', variant: 'neutral' },
-      ...(extra && (extra as any).includeCancel ? [{ id: 'cancel', text: 'Cancel' as const }] : []),
-    ] as any,
-    escReturns: 'cancel',
-    backdropReturns: 'cancel',
+    buttons,
+    onDismissal: 'cancel',  // Dismissal always maps to 'cancel' (returns false)
   });
+  
   return id === 'yes';
 }
 
-export async function alert(message: string, opts?: { title?: string }): Promise<void> {
+export async function alert(message: string, opts?: AlertOptions): Promise<void> {
   await new Promise<void>((resolve)=> {
     open({
+      ...opts,
       title: opts?.title,
       content: message,
-      buttons: [{ id:'ok', text: config.get().i18n.ok, variant:'primary', onClick: ()=>resolve() }],
+      buttons: [{ 
+        id:'ok', 
+        text: opts?.okText ?? config.get().i18n.ok, 
+        variant:'primary', 
+        onClick: ()=>resolve() 
+      }],
       closeOnEsc: true,
       closeOnBackdrop: true,
+      onClose: () => resolve(), // Resolve on any dismissal (ESC, backdrop, close button)
     });
   });
 }
@@ -75,26 +92,50 @@ export async function alert(message: string, opts?: { title?: string }): Promise
 export async function prompt(
   message: string,
   defaultValue?: string,
-  opts?: Partial<import('./types').PromptOptions>
+  opts?: import('./types').PromptOptions
 ): Promise<string | null> {
   return new Promise((resolve) => {
     let inputValue = defaultValue ?? '';
     let errorEl: HTMLElement | null = null;
+    let resolved = false;
+
+    // Prevent double resolution
+    const safeResolve = (value: string | null) => {
+      if (!resolved) {
+        resolved = true;
+        resolve(value);
+      }
+    };
 
     const validateInput = (value: string): string | null => {
-      if (opts?.required && !value.trim()) {
+      const trimmed = value.trim();
+      
+      if (opts?.required && !trimmed) {
         return 'This field is required';
       }
+      if (opts?.minLength && trimmed.length < opts.minLength) {
+        return `Minimum ${opts.minLength} characters required`;
+      }
       if (opts?.pattern) {
-        const regex = new RegExp(opts.pattern);
-        if (!regex.test(value)) {
-          return 'Invalid format';
+        try {
+          const regex = new RegExp(opts.pattern);
+          if (!regex.test(value)) {
+            return 'Invalid format';
+          }
+        } catch (e) {
+          console.error('[PromptJS] Invalid regex pattern:', opts.pattern, e);
+          return 'Invalid format pattern';
         }
       }
       if (opts?.validator) {
-        const result = opts.validator(value);
-        if (result === false) return 'Invalid input';
-        if (typeof result === 'string') return result;
+        try {
+          const result = opts.validator(value);
+          if (result === false) return 'Invalid input';
+          if (typeof result === 'string') return result;
+        } catch (e) {
+          console.error('[PromptJS] Validator threw exception:', e);
+          return 'Validation error';
+        }
       }
       return null;
     };
@@ -150,22 +191,22 @@ export async function prompt(
           return;
         }
         // Validation passed, resolve and close
-        resolve(inputValue);
+        safeResolve(inputValue);
         modal.close('ok');
       }
     });
 
     const modal = open({
+      ...opts,
       title: opts?.title,
       content: contentWrapper,
-      kind: opts?.kind,
       buttons: [
         { 
           id: 'cancel', 
           text: opts?.cancelText ?? config.get().i18n.cancel, 
           variant: 'neutral',
           closeOnClick: true,
-          onClick: () => resolve(null)
+          onClick: () => safeResolve(null)
         },
         { 
           id: 'ok', 
@@ -183,7 +224,7 @@ export async function prompt(
               return;
             }
             // Validation passed, resolve and close
-            resolve(inputValue);
+            safeResolve(inputValue);
             modal.close('ok');
           }
         }
@@ -191,8 +232,8 @@ export async function prompt(
       closeOnEsc: true,
       closeOnBackdrop: false, // Don't lose input on accidental backdrop click
       onClose: (result) => {
-        if (result === 'esc' || result === 'backdrop') {
-          resolve(null);
+        if (result === 'esc' || result === 'backdrop' || result === 'close') {
+          safeResolve(null);
         }
       },
       onOpen: () => {

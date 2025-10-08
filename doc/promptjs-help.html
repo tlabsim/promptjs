@@ -1360,16 +1360,16 @@ const t = setInterval(() =&gt; {
               <code
                 >question(opts: { title?: string; message: string; buttons:
                 Array&lt;{ id: string; text: string; variant?: string }&gt;;
-                escReturns?: string | null; backdropReturns?: string | null })
+                onDismissal?: string })
                 =&gt; Promise&lt;{ id: string }&gt;</code
               >
             </dt>
             <dd>
               Presents a set of labeled choices and resolves with the
-              <code>id</code> of the clicked button. Map ESC or backdrop to an
-              id using <code>escReturns</code> /
-              <code>backdropReturns</code> (set to <code>null</code>
-              to disable those routes).
+              <code>id</code> of the clicked button. Handle ESC, backdrop, 
+              and close button dismissal by providing <code>onDismissal</code> 
+              with a button ID. If not provided, these dismissal methods will 
+              not close the dialog.
             </dd>
           </dl>
 
@@ -1415,8 +1415,7 @@ if (ok) { /* proceed */ }</code></pre>
     { id: "a", text: "Option A", variant: "primary" },
     { id: "b", text: "Option B" }
   ],
-  escReturns: "a",
-  backdropReturns: "b"
+  onDismissal: "b"
 });
 // res.id === "a" | "b"</code></pre>
               <div class="runbar">
@@ -1445,8 +1444,10 @@ if (ok) { /* proceed */ }</code></pre>
                 “Yes/No”.
               </li>
               <li>
-                Map ESC/backdrop to explicit outcomes in
-                <code>question()</code> for deterministic flows.
+                Use <code>onDismissal</code> in <code>question()</code> to 
+                handle ESC, backdrop, and close button dismissal with an explicit 
+                button ID. For critical workflows that require explicit user choice, 
+                omit <code>onDismissal</code> to prevent accidental dismissal.
               </li>
             </ul>
           </details>

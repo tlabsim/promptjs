@@ -248,8 +248,7 @@
           { id: "a", text: "Option A", variant: "primary" },
           { id: "b", text: "Option B" },
         ],
-        escReturns: "b",
-        backdropReturns: "b",
+        onDismissal: "b",
       });
       PJ().toast({
         kind: "success",
@@ -500,8 +499,7 @@
           { id: "a", text: "Option A", variant: "primary" },
           { id: "b", text: "Option B" },
         ],
-        escReturns: "a",
-        backdropReturns: "b",
+        onDismissal: "b",
       });
       PJ().toast({ kind: "info", message: "You chose <b>" + res.id + "</b>." });
     },

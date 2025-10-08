@@ -102,10 +102,13 @@ export function open(options: ModalOptions): ModalInstance {
       const btns: ButtonDef[] = options.buttons ?? [
         { id: "ok", text: i18n.ok, variant: "primary" },
       ];
+      let defaultButton: HTMLButtonElement | null = null;
+      
       for (const btn of btns) {
         const b = document.createElement("button");
         b.className = `pj-modal-btn ${btn.variant || "neutral"}`;
         b.textContent = btn.text;
+        b.setAttribute('data-button-id', btn.id);
         b.addEventListener("click", async () => {
           try {
             b.disabled = true;
@@ -116,6 +119,20 @@ export function open(options: ModalOptions): ModalInstance {
           }
         });
         footer.appendChild(b);
+        
+        // Track default button for focus
+        if (options.defaultButtonId && btn.id === options.defaultButtonId) {
+          defaultButton = b;
+        }
+      }
+      
+      // Focus default button after modal opens
+      if (defaultButton) {
+        const originalOnOpen = options.onOpen;
+        core.onOpen = (ctx) => {
+          if (originalOnOpen) originalOnOpen(ctx);
+          setTimeout(() => defaultButton?.focus(), 100);
+        };
       }
 
       // Provide a real update() only for dialog fields

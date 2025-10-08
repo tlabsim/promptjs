@@ -38,6 +38,9 @@ export type ModalDraggable =
     };
 
 export interface BaseModalOptions {
+  // Content
+  title?: string;                  // modal title (optional)
+
   // Visual + sizing
   size?: 'sm' | 'md' | 'lg' | { w?: number | string; h?: number | string };
 
@@ -56,6 +59,7 @@ export interface BaseModalOptions {
   // Chrome
   showClose?: boolean;             // default true. Renders header "X" button.
   closeAriaLabel?: string;         // default "Close"
+  defaultButtonId?: string;        // button ID to focus on modal open
 
   // Accent
   kind?: NotifyKind;               // optional accent styling for dialogs
@@ -71,18 +75,17 @@ export interface BaseModalOptions {
 
 // ----- Dialog options (EXACTLY your current ModalOptions) -----
 export interface ModalOptions extends BaseModalOptions {
-  title?: string;
-  content: string | Node;
-  unsafeHTML?: boolean;
+  content: string | Node;          // required content
+  unsafeHTML?: boolean;            // bypass sanitization for content (use only for trusted content)
   buttons?: ButtonDef[];
 }
 
-export interface BareModalOptions extends Omit<ModalOptions, "title" | "buttons" | "content" | "unsafeHTML"> {
+export interface BareModalOptions extends Omit<BaseModalOptions, "title"> {
   /** PromptJS chrome (header chrome off by default). Default: true */
   windowed?: boolean;
   /** Optional initial content (sanitized unless unsafeHTML). */
-  content?: string | Node;
-  unsafeHTML?: boolean;
+  content?: string | Node;         // optional content
+  unsafeHTML?: boolean;            // bypass sanitization for content (use only for trusted content)
   /** Optional surface/content classes (hooks) */
   surfaceClass?: string;
   contentClass?: string;
@@ -109,44 +112,35 @@ export interface NotifyOptions {
 }
 
 // Helper option types for alert/confirm/question
-export interface AlertOptions {
-  title?: string;
-  kind?: NotifyKind;
+export interface AlertOptions extends BaseModalOptions {
   okText?: string;             // falls back to i18n.ok
 }
 
-export interface ConfirmOptions {
-  title?: string;
-  kind?: NotifyKind;
+export interface ConfirmOptions extends BaseModalOptions {
   yesText?: string;            // falls back to i18n.yes
   noText?: string;             // falls back to i18n.no
   includeCancel?: boolean;     // default false
   cancelText?: string;         // falls back to i18n.cancel
 }
 
-export interface PromptOptions {
-  title?: string;
-  kind?: NotifyKind;
+export interface PromptOptions extends BaseModalOptions {
   okText?: string;             // falls back to i18n.ok
   cancelText?: string;         // falls back to i18n.cancel
   placeholder?: string;        // input placeholder
   inputType?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';  // default 'text'
   required?: boolean;          // default false
   maxLength?: number;          // optional max length
+  minLength?: number;          // optional min length
   pattern?: string;            // regex pattern for validation
   validator?: (value: string) => boolean | string;  // custom validator, returns true or error message
 }
 
 export interface QuestionButton { id: string; text: string; variant?: ButtonVariant; }
 
-export interface QuestionOptions {
-  title?: string;
+export interface QuestionOptions extends BaseModalOptions {
   message: string;
-  kind?: NotifyKind;           // can be 'question' to show question accent
   buttons: QuestionButton[];   // e.g., Yes/No/Cancel
-  defaultId?: string;
-  escReturns?: string | null;
-  backdropReturns?: string | null;
+  onDismissal?: string;        // button id to return when ESC/backdrop/close button pressed
 }
 
 // ---------- Toasts (edge notifications) ----------
