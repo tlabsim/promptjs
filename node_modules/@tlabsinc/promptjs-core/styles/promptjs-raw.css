@@ -14,7 +14,10 @@
 
  @import './tokens.css';
 
+ /* Reset and base styles */
  * {
+   margin: 0;
+   padding: 0;
    box-sizing: border-box;
  }
 
@@ -38,7 +41,8 @@
 .pj-modal-translucent { backdrop-filter: saturate(1.2) blur(var(--pj-modal-blur, 0)); border: 1px solid color-mix(in oklab, rgb(var(--pj-modal-surface-rgb)) 70%, transparent);}
 .pj-modal   { will-change: opacity, transform; }
 
-.pj-modal-header { position: relative; display:flex; min-height: 1.54rem; padding: 0 2rem; padding-right: 4rem; border-bottom:0px solid var(--pj-border); }
+.pj-modal-header { position: relative; display:flex; min-height: 1.5rem; padding: 0 2rem; padding-right: 4rem; border-bottom:0px solid var(--pj-border); }
+.pj-modal-title { font-size: 1.25rem; font-weight: 600; line-height: 1.2; margin:0; padding: 1.5rem 0; flex: 1 1 auto; }
 .pj-modal-close {  position: absolute;  top: 8px;  right: 8px;  width: 28px;  height: 28px; padding:6px; border-radius: 8px; display: inline-flex;align-items: center; justify-content: center; border: 1px solid var(--pj-border);  background: var(--pj-muted); color: inherit; cursor: pointer; }
 .pj-modal-close:hover { background: var(--pj-muted-hover); }
 .pj-modal-footer{ position: relative; padding: 1rem 2rem; border-top:0px solid var(--pj-border); border-bottom:none; display:flex; gap:8px; justify-content:flex-end; font-size: .9rem;}
